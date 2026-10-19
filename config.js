@@ -43,7 +43,10 @@ const CONFIG = {
      servicio y plantilla que usa la plataforma de solicitudes (las
      llaves son públicas: viven en el navegador). El plan gratuito da
      200 correos al mes entre las dos plataformas; si la convocatoria
-     se llena, poner activo: false y revisar equipo.html. */
+     se llena, poner activo: false y revisar equipo.html.
+     OJO (19-oct-2026): en las pruebas la API aceptaba la petición pero
+     tardaba más de 40 s en contestar; el formulario no espera la
+     respuesta, así que al alumno no lo detiene. */
   avisos: {
     activo:  true,
     correos: ['leonardo.gonzalez@tijuana.ibero.mx', 'marysol.castro@tijuana.ibero.mx'],   // a quién le llega
@@ -152,5 +155,5 @@ const CONFIG = {
   /* Estados que el equipo le pone a cada registro. */
   estados: ['nueva', 'convocada', 'descartada'],
 
-  version: '1.4',
+  version: '1.5',
 };

@@ -375,9 +375,8 @@ $('#btn-enviar').addEventListener('click', async () => {
    registro ya está en la base y se ve en equipo.html. */
 async function avisar(r) {
   const av = CONFIG.avisos;
-  if (!av || !av.activo || !av.correos.length || typeof emailjs === 'undefined') return;
+  if (!av || !av.activo || !av.correos.length) return;
   try {
-    emailjs.init(av.emailjs.publica);
     const porDia = {};
     r.disponibilidad.forEach(k => { const [iso] = k.split('|'); porDia[iso] = (porDia[iso] || 0) + 1; });
     const dias = Semana.dias.filter(d => porDia[d.iso]).map(d => d.corto + ' ' + d.num + ' (' + porDia[d.iso] + ' h)').join(', ');
@@ -394,13 +393,23 @@ async function avisar(r) {
       '</table>' +
       '<p style="margin:18px 0 0"><a href="' + av.vistaEquipo + '" style="color:#E0202B;font-weight:700">Ver todos los registros y la foto →</a></p>' +
       '<p style="margin:14px 0 0;font-size:12px;color:#655C54">Folio ' + r.folio + ' · ' + CONFIG.titulo + '</p></div>';
-    await emailjs.send(av.emailjs.servicio, av.emailjs.plantilla, {
-      subject: 'Nuevo registro: ' + r.nombre + ' (' + r.carrera + ')',
-      html_content: html,
-      to_email: av.correos.join(','),
-      cc_email: '', bcc_email: '',
-      name: 'Convocatoria IBERO Tijuana',
+    /* Directo a la API de EmailJS (lo mismo que hace su SDK), con
+       keepalive para que el envío siga aunque el alumno cierre la
+       pestaña en cuanto ve «¡Ya quedó!». */
+    const r2 = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+      method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        service_id: av.emailjs.servicio, template_id: av.emailjs.plantilla, user_id: av.emailjs.publica,
+        template_params: {
+          subject: 'Nuevo registro: ' + r.nombre + ' (' + r.carrera + ')',
+          html_content: html,
+          to_email: av.correos.join(','),
+          cc_email: '', bcc_email: '',
+          name: 'Convocatoria IBERO Tijuana',
+        },
+      }),
     });
+    if (!r2.ok) throw new Error('HTTP ' + r2.status + ' ' + (await r2.text()).slice(0, 120));
   } catch (e) {
     console.warn('No salió el aviso por correo:', e && (e.text || e.message || e));
   }
