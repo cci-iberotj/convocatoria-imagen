@@ -6,10 +6,10 @@ Tres piezas en una carpeta:
 | Archivo | Qué es |
 |---|---|
 | `convocatoria.md` | El texto completo de la convocatoria para revisar con el equipo, con las decisiones pendientes marcadas **[así]** y una recomendación para cada una. |
-| `index.html` | La página que ven los alumnos (celular primero): landing con portada a pantalla completa, cinta, galería, pasos, aviso de ropa; y luego el registro: datos, foto con la cámara, rejilla de disponibilidad y consentimiento. Los estilos de la landing están en `inicio.css`; los del registro y la vista del equipo en `estilos.css`. |
+| `index.html` | La página que ven los alumnos (celular primero): landing con portada a pantalla completa, cinta, galería, pasos, aviso de ropa; y luego el registro: nombre, carrera (con «Posgrados»), semestre, correo, teléfono; foto con la cámara, rejilla de disponibilidad y consentimiento. Sin matrícula ni Instagram (Leo, 19-oct); un registro por correo. Los estilos de la landing están en `inicio.css`; los del registro y la vista del equipo en `estilos.css`. |
 | `equipo.html` | La vista del equipo: lista con foto, contacto, mapa de calor de disponibilidad, ficha con estado y nota, borrado y exportación a CSV. |
 
-**Todavía no está publicado.** Se revisa en local hasta aprobarlo. Las respuestas ya se guardan en la base de LA PIZARRA (tabla `casting`, creada el 19-oct-2026).
+**Publicado:** https://cci-iberotj.github.io/convocatoria-imagen/ (equipo: `/equipo.html`). Las respuestas se guardan en la base de LA PIZARRA (tabla `casting`, creada el 19-oct-2026).
 
 ---
 
@@ -86,13 +86,18 @@ Por qué no un proyecto aparte de Supabase (como Nuestra Órbita): es
 trabajo institucional, el equipo ya tiene cuentas en LA PIZARRA, y un
 proyecto más es otro token, otro respaldo y otra contraseña que mantener.
 
-## Publicar (cuando se apruebe)
+## Publicar
 
-Como los demás proyectos: repositorio en la cuenta `cci-iberotj` y
-`empujar.py` / `publicar.py` por la API de GitHub (la red bloquea
-`github.com:443`). Copiar el de `nuestra-orbita` y cambiar el nombre del
-repositorio. La vista del equipo se publica junto: no tiene nada
-secreto, y sin cuenta no lee nada.
+```
+python publicar.py "qué cambió"
+```
+
+Sube la versión en `config.js`, la estampa como `?v=` en los dos HTML
+(para que el navegador no se quede con la copia vieja de Pages), hace
+el commit y lo empuja por la API de GitHub con `empujar.py` (la red
+bloquea `github.com:443`). Repositorio `cci-iberotj/convocatoria-imagen`.
+`publicar.py` se niega si `modoPrueba` está en `true`. La vista del
+equipo se publica junto: no tiene nada secreto, y sin cuenta no lee nada.
 
 ## Tipografía y paleta
 

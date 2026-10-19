@@ -122,7 +122,6 @@ $('#paso-1').addEventListener('submit', ev => {
   const v = n => f.elements[n].value.trim();
   let ok = true;
   ok &= marcar(f.elements.nombre, v('nombre').split(/\s+/).length < 2 || v('nombre').length < 5);
-  ok &= marcar(f.elements.matricula, !/^[A-Za-z0-9-]{4,20}$/.test(v('matricula')));
   ok &= marcar(f.elements.semestre, !v('semestre'));
   ok &= marcar(f.elements.carrera, !v('carrera'));
   const correo = v('correo').toLowerCase();
@@ -135,12 +134,10 @@ $('#paso-1').addEventListener('submit', ev => {
   if (!ok) $$('#paso-1 .campo.mal').forEach(c => c.classList.remove('mal'));
 
   registro.nombre    = v('nombre').replace(/\s+/g, ' ');
-  registro.matricula = v('matricula').toUpperCase();
   registro.semestre  = Number(v('semestre'));
   registro.carrera   = v('carrera');
   registro.correo    = correo;
   registro.telefono  = tel;
-  registro.instagram = v('instagram').replace(/^@/, '').replace(/^https?:\/\/(www\.)?instagram\.com\//, '').replace(/\/$/, '');
   irA(2);
 });
 
@@ -332,9 +329,7 @@ function pintarResumen() {
   $('#resumen-datos').innerHTML =
     '<dt>Nombre</dt><dd>' + esc(registro.nombre) + '</dd>' +
     '<dt>Carrera · semestre</dt><dd>' + esc(registro.carrera) + ' · ' + registro.semestre + '°</dd>' +
-    '<dt>Matrícula</dt><dd>' + esc(registro.matricula) + '</dd>' +
-    '<dt>Contacto</dt><dd>' + esc(registro.correo) + '<br>' + registro.telefono.replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3') +
-    (registro.instagram ? ' · @' + esc(registro.instagram) : '') + '</dd>';
+    '<dt>Contacto</dt><dd>' + esc(registro.correo) + '<br>' + registro.telefono.replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3') + '</dd>';
   const porDia = {};
   registro.disponibilidad.forEach(k => { const [iso] = k.split('|'); porDia[iso] = (porDia[iso] || 0) + 1; });
   $('#resumen-horas').textContent = registro.disponibilidad.length + ' horas en ' + Object.keys(porDia).length + ' días';
@@ -360,13 +355,13 @@ $('#btn-enviar').addEventListener('click', async () => {
       /* En modo prueba lo que importa es ver la pantalla final. */
       saludar();
       const ap = $('#aviso-prueba');
-      ap.textContent = 'Modo prueba: este registro NO se guardó (' + (e.message === 'DUPLICADO' ? 'matrícula repetida' : 'faltan datos o no pasó la base') + ').';
+      ap.textContent = 'Modo prueba: este registro NO se guardó (' + (e.message === 'DUPLICADO' ? 'correo repetido' : 'faltan datos o no pasó la base') + ').';
       ap.classList.remove('oculto');
       irA(5);
       return;
     }
     aviso.textContent = e.message === 'DUPLICADO'
-      ? 'Ya tenemos un registro con esa matrícula. Si necesitas cambiar algo, escríbenos.'
+      ? 'Ya tenemos un registro con ese correo. Si necesitas cambiar algo, escríbenos.'
       : 'No se pudo enviar (' + e.message + '). Revisa tu conexión e inténtalo de nuevo.';
     aviso.classList.remove('oculto');
   } finally {

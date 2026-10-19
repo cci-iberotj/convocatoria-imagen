@@ -38,7 +38,7 @@ const Almacen = (() => {
     },
     async guardar(r) {
       const lista = this._leer();
-      const yo = lista.findIndex(x => x.matricula === r.matricula);
+      const yo = lista.findIndex(x => x.correo === r.correo);
       if (yo >= 0) lista.splice(yo, 1);      // en local, repetir reemplaza
       lista.push(r);
       this._escribir(lista);

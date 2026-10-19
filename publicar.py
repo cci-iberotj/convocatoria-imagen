@@ -42,10 +42,9 @@ def main():
 
     conf = leer('config.js')
     if re.search(r"modoPrueba:\s*true", conf):
-        print('
-  config.js trae modoPrueba: true. Ponlo en false antes de publicar:')
-        print('  así cualquier alumno podría enviar el registro vacío.
-')
+        print('')
+        print('  config.js trae modoPrueba: true. Ponlo en false antes de publicar:')
+        print('  asi cualquier alumno podria enviar el registro vacio.')
         sys.exit(1)
     m = re.search(r"version:\s*'(\d+)\.(\d+)'", conf)
     if not m:

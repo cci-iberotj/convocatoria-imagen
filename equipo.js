@@ -65,7 +65,7 @@ function filtrados() {
   const q = $('#f-texto').value.trim().toLowerCase();
   const car = $('#f-carrera').value, est = $('#f-estado').value;
   return todos.filter(r =>
-    (!q || [r.nombre, r.matricula, r.correo, r.instagram, r.telefono].some(v => String(v || '').toLowerCase().includes(q))) &&
+    (!q || [r.nombre, r.correo, r.telefono].some(v => String(v || '').toLowerCase().includes(q))) &&
     (!car || r.carrera === car) &&
     (!est || (r.estado || 'nueva') === est) &&
     (!bloqueElegido || (r.disponibilidad || []).includes(bloqueElegido)));
@@ -144,8 +144,8 @@ function pintarLista() {
       ${r.foto ? `<img src="${r.foto}" alt="">` : `<div class="sinfoto">${esc((r.nombre || '?')[0])}</div>`}
       <div>
         <div class="nombre">${esc(r.nombre)} <span class="chip ${esc(r.estado || 'nueva')}">${esc(r.estado || 'nueva')}</span></div>
-        <div class="linea">${esc(r.carrera)} · ${r.semestre}° · ${esc(r.matricula)}</div>
-        <div class="linea">${telefono(r.telefono)}${r.instagram ? ' · @' + esc(r.instagram) : ''}</div>
+        <div class="linea">${esc(r.carrera)} · ${r.semestre}°</div>
+        <div class="linea">${telefono(r.telefono)} · ${esc(r.correo)}</div>
       </div>
       <div class="horas"><b>${(r.disponibilidad || []).length}</b>horas</div>
     </button>`).join('');
@@ -162,10 +162,8 @@ function abrirFicha(folio) {
   $('#ficha-nombre').textContent = r.nombre;
   $('#ficha-datos').innerHTML =
     '<dt>Carrera · semestre</dt><dd>' + esc(r.carrera) + ' · ' + r.semestre + '°</dd>' +
-    '<dt>Matrícula</dt><dd>' + esc(r.matricula) + '</dd>' +
     '<dt>Correo</dt><dd><a href="mailto:' + esc(r.correo) + '">' + esc(r.correo) + '</a></dd>' +
     '<dt>Teléfono · WhatsApp</dt><dd><a href="https://wa.me/52' + esc(r.telefono) + '" target="_blank" rel="noopener">' + telefono(r.telefono) + '</a></dd>' +
-    (r.instagram ? '<dt>Instagram</dt><dd><a href="https://instagram.com/' + esc(r.instagram) + '" target="_blank" rel="noopener">@' + esc(r.instagram) + '</a></dd>' : '') +
     '<dt>Registrado</dt><dd>' + fecha(r.creado) + '</dd>';
   const disp = new Set(r.disponibilidad || []);
   $('#ficha-horas').textContent = '· ' + disp.size + ' horas';
@@ -221,11 +219,11 @@ $('#btn-csv').addEventListener('click', () => {
   const vistos = filtrados();
   const bloques = [];
   Semana.dias.forEach(d => Semana.horas.forEach(h => bloques.push({ k: Semana.clave(d.iso, h), t: d.corto + ' ' + d.num + ' ' + Semana.hh(h) })));
-  const cab = ['folio', 'nombre', 'matricula', 'carrera', 'semestre', 'correo', 'telefono', 'instagram',
+  const cab = ['folio', 'nombre', 'carrera', 'semestre', 'correo', 'telefono',
                'estado', 'nota', 'horas', 'registrado', ...bloques.map(b => b.t)];
   const filas = vistos.map(r => {
     const d = new Set(r.disponibilidad || []);
-    return [r.folio, r.nombre, r.matricula, r.carrera, r.semestre, r.correo, r.telefono, r.instagram,
+    return [r.folio, r.nombre, r.carrera, r.semestre, r.correo, r.telefono,
             r.estado || 'nueva', r.nota, d.size, r.creado, ...bloques.map(b => d.has(b.k) ? 'x' : '')];
   });
   const celda = v => { const s = String(v == null ? '' : v); return /[",\n;]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
@@ -260,10 +258,10 @@ $('#btn-muestra').addEventListener('click', async () => {
     });
     const carrera = CONFIG.carreras[i % CONFIG.carreras.length];
     await Almacen.guardar({
-      folio: Almacen.folio(), nombre: nombres[i], matricula: String(240000 + i * 37),
+      folio: Almacen.folio(), nombre: nombres[i], matricula: '',
       carrera, semestre: 1 + (i * 3) % CONFIG.semestres,
       correo: nombres[i].toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').split(' ').slice(0, 2).join('.') + '@tijuana.ibero.mx',
-      telefono: '664' + String(1000000 + i * 54321).slice(0, 7), instagram: i % 3 ? nombres[i].split(' ')[0].toLowerCase() + '.ibero' : '',
+      telefono: '664' + String(1000000 + i * 54321).slice(0, 7), instagram: '',
       foto: retrato(nombres[i], i), disponibilidad: disp,
       consentimientos: { datos: true, imagen: true }, estado: i % 7 === 6 ? 'descartada' : i % 5 === 4 ? 'convocada' : 'nueva',
       nota: '', atendido_por: '', creado: new Date(creado + i * 97e5).toISOString(),

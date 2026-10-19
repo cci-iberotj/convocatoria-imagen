@@ -6,9 +6,9 @@
 <title>La IBERO se ve como tú · Convocatoria</title>
 <meta name="description" content="Convocatoria para alumnas y alumnos de IBERO Tijuana que quieran ser la imagen de la universidad en fotos y video.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23E0202B'/%3E%3Ccircle cx='16' cy='13' r='5' fill='%23fff'/%3E%3Cpath d='M7 27c1.5-5 5-7 9-7s7.5 2 9 7z' fill='%23fff'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="tipografia.css?v=1.2">
-<link rel="stylesheet" href="estilos.css?v=1.2">
-<link rel="stylesheet" href="inicio.css?v=1.2">
+<link rel="stylesheet" href="tipografia.css?v=1.3">
+<link rel="stylesheet" href="estilos.css?v=1.3">
+<link rel="stylesheet" href="inicio.css?v=1.3">
 </head>
 <body class="alegre">
 <main>
@@ -26,7 +26,7 @@
           <button id="btn-empezar" class="btn primario grande">Me apunto</button>
           <a class="btn claro grande" href="#como">¿Cómo funciona?</a>
         </div>
-        <p class="meta entra" style="color:rgba(255,255,255,.75);margin-top:16px">Son tres minutos. Ten a la mano tu matrícula y tómate una foto con tu cel.</p>
+        <p class="meta entra" style="color:rgba(255,255,255,.75);margin-top:16px">Son tres minutos. Sólo necesitas tomarte una foto con tu cel.</p>
       </div>
       <div class="pista" aria-hidden="true"></div>
     </header>
@@ -110,7 +110,7 @@
         <details class="privacidad revela" data-retardo="2" style="margin-top:28px">
           <summary>Tu privacidad y tu imagen</summary>
           <p>Tus datos y la foto del registro sólo los ve el equipo de Comunicación, para convocarte; la foto no se publica. Si participas en una sesión, autorizas que tu imagen aparezca en materiales de la IBERO.</p>
-          <p><b>Tus datos.</b> Nombre, carrera, semestre, matrícula, correo, teléfono e Instagram sirven sólo para esta convocatoria: elegir, convocar y coordinar las sesiones. Los ve únicamente el equipo de Comunicación Institucional; no se comparten fuera de la universidad ni se usan para otra cosa.</p>
+          <p><b>Tus datos.</b> Nombre, carrera, semestre, correo y teléfono sirven sólo para esta convocatoria: elegir, convocar y coordinar las sesiones. Los ve únicamente el equipo de Comunicación Institucional; no se comparten fuera de la universidad ni se usan para otra cosa.</p>
           <p><b>La foto del registro.</b> Es sólo para relacionar tu nombre con tu cara al convocarte. No se publica y se borra al cerrar la convocatoria, junto con los datos de quienes no participaron.</p>
           <p><b>Tu imagen en las sesiones.</b> Si participas, autorizas a la Universidad Iberoamericana Tijuana a captar, editar y usar tu imagen y tu voz, fija o en movimiento, en materiales institucionales (sitio web, redes sociales, impresos, campañas de admisión y promoción y publicidad en vía pública), sin límite de territorio. El día de la sesión firmas el formato de autorización de uso de imagen.</p>
           <p><b>Puedes cambiar de opinión.</b> Puedes pedir que no se use tu imagen en materiales futuros escribiendo al contacto de abajo. Lo ya publicado o impreso no siempre se puede retirar.</p>
@@ -153,22 +153,15 @@
         <input name="nombre" type="text" autocomplete="name" required minlength="5" maxlength="120" placeholder="Como aparece en tu credencial">
         <small class="error">Escribe tu nombre completo.</small>
       </label>
-      <div class="fila">
-        <label class="campo">
-          <span>Matrícula</span>
-          <input name="matricula" type="text" inputmode="numeric" autocomplete="off" required minlength="4" maxlength="20" placeholder="Número de cuenta">
-          <small class="error">Falta tu matrícula.</small>
-        </label>
-        <label class="campo">
-          <span>Semestre</span>
-          <select name="semestre" required><option value="">Elige</option></select>
-          <small class="error">Elige tu semestre.</small>
-        </label>
-      </div>
       <label class="campo">
         <span>Carrera</span>
         <select name="carrera" required><option value="">Elige tu carrera</option></select>
         <small class="error">Elige tu carrera.</small>
+      </label>
+      <label class="campo">
+        <span>Semestre</span>
+        <select name="semestre" required><option value="">Elige</option></select>
+        <small class="error">Elige tu semestre.</small>
       </label>
       <label class="campo">
         <span>Correo institucional</span>
@@ -181,10 +174,6 @@
         <input name="telefono" type="tel" inputmode="tel" autocomplete="tel" required placeholder="10 dígitos">
         <small class="ayuda">Por aquí te avisamos si quedas.</small>
         <small class="error">Escribe un número de diez dígitos.</small>
-      </label>
-      <label class="campo">
-        <span>Instagram <em>· si quieres</em></span>
-        <input name="instagram" type="text" autocomplete="off" maxlength="40" placeholder="@usuario">
       </label>
       <div class="acciones">
         <button type="button" class="btn secundario" data-atras>Atrás</button>
@@ -281,8 +270,8 @@
 </main>
 <div id="etiqueta-prueba" class="etiqueta-prueba oculto">Modo prueba · se puede avanzar sin llenar</div>
 <canvas id="lienzo" class="oculto"></canvas>
-<script src="config.js?v=1.2"></script>
-<script src="almacen.js?v=1.2"></script>
-<script src="formulario.js?v=1.2"></script>
+<script src="config.js?v=1.3"></script>
+<script src="almacen.js?v=1.3"></script>
+<script src="formulario.js?v=1.3"></script>
 </body>
 </html>

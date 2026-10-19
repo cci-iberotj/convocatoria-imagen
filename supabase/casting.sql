@@ -47,9 +47,11 @@ alter table public.casting drop constraint if exists casting_estado_check;
 alter table public.casting add constraint casting_estado_check
   check (estado in ('nueva', 'convocada', 'descartada'));
 
--- Una persona, un registro. El formulario avisa si se repite la matrícula.
-create unique index if not exists idx_casting_matricula
-  on public.casting (upper(matricula));
+-- Una persona, un registro. El formulario avisa si se repite el correo.
+-- (Hasta el 19-oct-2026 era por matrícula; Leo decidió no pedirla.)
+drop index if exists public.idx_casting_matricula;
+create unique index if not exists idx_casting_correo
+  on public.casting (lower(correo));
 
 comment on table public.casting is
   'Registros de la convocatoria de imagen institucional (alumnos que quieren salir en fotos y video).';
@@ -76,7 +78,7 @@ create policy "registrarse" on public.casting
     and atendido_por = ''
     and folio ~ '^[A-Z0-9]{8}$'
     and char_length(nombre)    between 5 and 120
-    and char_length(matricula) between 4 and 20
+    and char_length(matricula) <= 20
     and char_length(carrera)   between 1 and 80
     and semestre between 1 and 12
     and char_length(correo)    between 6 and 120

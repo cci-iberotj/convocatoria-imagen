@@ -54,7 +54,7 @@ Queremos gente real de la comunidad, con ganas de representar a su carrera y de 
 
 ## 6 · Tu privacidad y tu imagen
 
-**Tus datos.** El nombre, carrera, semestre, matrícula, correo, teléfono e Instagram que escribas sirven **sólo para esta convocatoria**: para elegir, convocar y coordinar las sesiones. Los ve únicamente el equipo de Comunicación Institucional. No se comparten con nadie fuera de la universidad ni se usan para otra cosa.
+**Tus datos.** El nombre, carrera, semestre, correo y teléfono que escribas sirven **sólo para esta convocatoria**: para elegir, convocar y coordinar las sesiones. Los ve únicamente el equipo de Comunicación Institucional. No se comparten con nadie fuera de la universidad ni se usan para otra cosa.
 
 **La foto del registro.** Es sólo para que el equipo relacione tu nombre con tu cara al convocarte. **No se publica** y se borra al cerrar la convocatoria, junto con los datos de quienes no participaron. **[Los datos de quienes sí participaron se conservan mientras su imagen esté en uso.]**
 
@@ -113,13 +113,13 @@ Es lo que ve el alumno al abrir la liga, antes de los pasos, con tres fotos de l
 >
 > **[ Me apunto ]**
 >
-> Son tres minutos. Ten a la mano tu matrícula y tómate una foto con tu cel.
+> Son tres minutos. Sólo necesitas tomarte una foto con tu cel.
 >
 > Dudas: [correo del área] · tijuana.ibero.mx
 
 ## Los cuatro pasos del formulario
 
-1. **Cuéntanos de ti**: nombre completo, matrícula, carrera, semestre, correo institucional, teléfono o WhatsApp, Instagram (opcional).
+1. **Cuéntanos de ti**: nombre completo, carrera (incluye «Posgrados»), semestre, correo institucional, teléfono o WhatsApp.
 2. **Una foto para reconocerte**: se toma con la cámara del celular desde el mismo formulario; si la cámara no abre, se puede subir una foto. No se publica.
 3. **¿Cuándo puedes?**: rejilla de lunes 26 a viernes 30, por horas. Se marca tocando o arrastrando.
 4. **Todo listo**: resumen, dos casillas (uso de datos para la convocatoria y autorización de uso de imagen si participa) y envío.
