@@ -37,6 +37,24 @@ const CONFIG = {
     tabla: 'casting',
   },
 
+  /* ── Avisos por correo ─────────────────────────────────
+     Cada registro nuevo manda un correo con los datos del alumno y
+     una liga a la vista del equipo. Sale por EmailJS, con el mismo
+     servicio y plantilla que usa la plataforma de solicitudes (las
+     llaves son públicas: viven en el navegador). El plan gratuito da
+     200 correos al mes entre las dos plataformas; si la convocatoria
+     se llena, poner activo: false y revisar equipo.html. */
+  avisos: {
+    activo:  true,
+    correos: ['leonardo.gonzalez@tijuana.ibero.mx', 'marysol.castro@tijuana.ibero.mx'],   // a quién le llega
+    emailjs: {
+      publica:   'OsE5ud5yypn13z0FL',
+      servicio:  'service_dixokk6',
+      plantilla: 'template_3ibijhm',
+    },
+    vistaEquipo: 'https://cci-iberotj.github.io/convocatoria-imagen/equipo.html',
+  },
+
   /* ── La convocatoria ───────────────────────────────────── */
   titulo:   'La IBERO se ve como tú',
   bajada:   'Buscamos alumnas y alumnos de todas las carreras para ser la imagen de la IBERO en fotos y video. ¿Te animas?',
@@ -134,5 +152,5 @@ const CONFIG = {
   /* Estados que el equipo le pone a cada registro. */
   estados: ['nueva', 'convocada', 'descartada'],
 
-  version: '1.3',
+  version: '1.4',
 };

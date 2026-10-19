@@ -2,3 +2,4 @@ datos/
 __pycache__/
 .claude/
 .git/ultimo-empujado-por-api
+difusion/

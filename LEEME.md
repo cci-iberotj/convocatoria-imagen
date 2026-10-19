@@ -86,6 +86,36 @@ Por qué no un proyecto aparte de Supabase (como Nuestra Órbita): es
 trabajo institucional, el equipo ya tiene cuentas en LA PIZARRA, y un
 proyecto más es otro token, otro respaldo y otra contraseña que mantener.
 
+## Cartel tabloide (difusión interna)
+
+En `difusion/`, dos versiones de 11 × 17 in, cada una con sus controles
+en el `:root` del HTML:
+
+- `cartel-tabloide.html`: con la foto de portada, cinta, tres bloques,
+  aviso de ropa y QR (la información completa).
+- `cartel-tabloide-minimo.html`: sin foto; un círculo rojo con tres
+  siluetas reales de la sesión (vector) adentro, un signo de
+  interrogación en cada cara, el título «Sé parte de la imagen de IBERO
+  Tijuana», una línea y el QR (sin liga escrita). Colores, círculo,
+  altura y posición de cada figura y de cada signo, todo en el `:root`
+  y en el `style` de cada figura.
+
+  Las siluetas las hace `siluetas.py`: Canva quitó el fondo de tres
+  fotos propias (su vista previa vuelve chica), esa máscara se escala y
+  sirve de semilla a GrabCut (OpenCV) a tamaño real, y el contorno se
+  traza a SVG en `siluetas/siluetas.js`. Para otra figura: subir la foto
+  a Canva, quitar el fondo, guardar la vista previa y agregar el par en
+  `PARES`.
+
+`construir.py` genera el QR a la liga publicada y, por cada versión, el
+PDF con Chrome (fuentes a curvas, sin márgenes) y un PNG para mirarlo.
+`python construir.py cartel-tabloide-minimo` hace sólo una. La carpeta no se sube al repositorio
+(está en `.gitignore`): es material de impresión, no de la página.
+
+```
+python difusion/construir.py
+```
+
 ## Publicar
 
 ```

@@ -347,6 +347,7 @@ $('#btn-enviar').addEventListener('click', async () => {
   const aviso = $('#aviso-envio'); aviso.classList.add('oculto');
   try {
     await Almacen.guardar(registro);
+    avisar(registro);   // no se espera: el registro ya quedó
     $('#aviso-prueba').classList.add('oculto');
     saludar();
     irA(5);
@@ -368,6 +369,42 @@ $('#btn-enviar').addEventListener('click', async () => {
     btn.disabled = false; btn.textContent = 'Enviar mi registro';
   }
 });
+
+/* ── Aviso por correo al equipo (EmailJS) ──────────────────
+   Se manda después de guardar y no detiene nada: si falla, el
+   registro ya está en la base y se ve en equipo.html. */
+async function avisar(r) {
+  const av = CONFIG.avisos;
+  if (!av || !av.activo || !av.correos.length || typeof emailjs === 'undefined') return;
+  try {
+    emailjs.init(av.emailjs.publica);
+    const porDia = {};
+    r.disponibilidad.forEach(k => { const [iso] = k.split('|'); porDia[iso] = (porDia[iso] || 0) + 1; });
+    const dias = Semana.dias.filter(d => porDia[d.iso]).map(d => d.corto + ' ' + d.num + ' (' + porDia[d.iso] + ' h)').join(', ');
+    const fila = (k, v) => '<tr><td style="padding:4px 12px 4px 0;color:#655C54">' + k + '</td><td style="padding:4px 0"><b>' + esc(v) + '</b></td></tr>';
+    const html =
+      '<div style="font-family:Segoe UI,Arial,sans-serif;font-size:15px;color:#191713">' +
+      '<p style="margin:0 0 10px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#E0202B"><b>Convocatoria · nuevo registro</b></p>' +
+      '<h2 style="margin:0 0 14px;font-size:22px">' + esc(r.nombre) + '</h2>' +
+      '<table style="border-collapse:collapse">' +
+      fila('Carrera', r.carrera + ' · ' + r.semestre + '°') +
+      fila('Correo', r.correo) +
+      fila('Teléfono', r.telefono.replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3')) +
+      fila('Disponibilidad', r.disponibilidad.length + ' horas: ' + dias) +
+      '</table>' +
+      '<p style="margin:18px 0 0"><a href="' + av.vistaEquipo + '" style="color:#E0202B;font-weight:700">Ver todos los registros y la foto →</a></p>' +
+      '<p style="margin:14px 0 0;font-size:12px;color:#655C54">Folio ' + r.folio + ' · ' + CONFIG.titulo + '</p></div>';
+    await emailjs.send(av.emailjs.servicio, av.emailjs.plantilla, {
+      subject: 'Nuevo registro: ' + r.nombre + ' (' + r.carrera + ')',
+      html_content: html,
+      to_email: av.correos.join(','),
+      cc_email: '', bcc_email: '',
+      name: 'Convocatoria IBERO Tijuana',
+    });
+  } catch (e) {
+    console.warn('No salió el aviso por correo:', e && (e.text || e.message || e));
+  }
+}
 
 /* «¡Ya quedó, Ana!» si hay nombre; «¡Ya quedó!» si no. */
 function saludar() {
