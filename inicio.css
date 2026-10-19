@@ -1,0 +1,201 @@
+/* ═══════════════════════════════════════════════════════════
+   Convocatoria · la página de inicio (landing)
+   Portada a pantalla completa con foto, cinta que corre,
+   secciones que aparecen al hacer scroll, galería, pasos
+   numerados y el aviso de ropa. Los pasos del formulario siguen
+   en estilos.css.
+   ═══════════════════════════════════════════════════════════ */
+
+body.alegre { --ancho: 1100px; }
+#inicio { width: 100%; overflow-x: clip; }
+body.alegre { overflow-x: hidden; }
+.hoja.landing { max-width: none; padding: 0; }
+.seccion { padding: 64px 20px; }
+.seccion > .dentro { max-width: var(--ancho); margin: 0 auto; }
+@media (min-width: 760px) { .seccion { padding: 96px 32px; } }
+
+.sello {
+  display: inline-block; font-size: 13px; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--accion); margin-bottom: 14px;
+}
+.titulo-seccion { font-size: clamp(30px, 5.2vw, 52px); line-height: 1.05; letter-spacing: -.015em; max-width: 18ch; }
+.texto-grande { font-size: clamp(18px, 2.3vw, 24px); line-height: 1.4; color: var(--tinta-media); max-width: 34ch; margin-top: 18px; }
+.texto-grande b { color: var(--tinta); }
+
+/* ── Portada ───────────────────────────────────────────── */
+.portada {
+  position: relative; min-height: 100svh; min-height: 100vh; display: flex; flex-direction: column;
+  justify-content: flex-end; padding: 24px 20px 44px; color: #fff; overflow: hidden; isolation: isolate;
+  background: #2a2420;
+}
+.portada .fondo {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2;
+  transform: scale(1.06); animation: respira 16s ease-in-out infinite alternate;
+}
+.portada::before {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(180deg, rgba(25,23,19,.16) 0%, rgba(25,23,19,.06) 24%, rgba(25,23,19,.55) 44%, rgba(25,23,19,.86) 60%, rgba(25,23,19,.95) 100%);
+}
+/* En pantalla ancha el texto va a la izquierda: se oscurece ese lado
+   para que se lea sin tapar a la persona de la foto. */
+@media (min-width: 760px) {
+  .portada::before {
+    background:
+      linear-gradient(90deg, rgba(25,23,19,.72) 0%, rgba(25,23,19,.38) 48%, rgba(25,23,19,0) 78%),
+      linear-gradient(180deg, rgba(25,23,19,.12) 0%, rgba(25,23,19,0) 40%, rgba(25,23,19,.55) 100%);
+  }
+}
+.portada .rotulo { position: absolute; top: 22px; left: 20px; color: #fff; }
+.portada .rotulo b { color: #fff; }
+.portada .rotulo .barra { color: #FF5C66; }
+.portada .dentro { max-width: var(--ancho); margin: 0 auto; width: 100%; }
+.portada h1 {
+  font-size: clamp(46px, 11.5vw, 108px); line-height: .94; letter-spacing: -.025em; max-width: 11ch;
+  text-shadow: 0 2px 24px rgba(0,0,0,.25);
+}
+.portada h1 em {
+  font-style: normal; color: #fff; background: var(--accion); padding: 0 .14em; border-radius: .1em;
+  display: inline-block; line-height: 1.02; transform: rotate(-2deg);
+}
+body.alegre .portada .bajada { color: rgba(255,255,255,.95); text-shadow: 0 1px 12px rgba(0,0,0,.45); font-size: clamp(17px, 2.2vw, 22px); max-width: 38ch; margin-top: 18px; line-height: 1.4; }
+.portada .acciones-portada { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.btn.claro { background: rgba(255,255,255,.14); color: #fff; border-color: rgba(255,255,255,.55); backdrop-filter: blur(6px); }
+.btn.claro:hover { background: rgba(255,255,255,.24); }
+.portada .pista {
+  position: absolute; right: 22px; bottom: 22px; width: 28px; height: 44px; border: 2px solid rgba(255,255,255,.6);
+  border-radius: 16px; display: none;
+}
+.portada .pista::after {
+  content: ''; position: absolute; left: 50%; top: 8px; width: 4px; height: 8px; margin-left: -2px;
+  border-radius: 2px; background: #fff; animation: rueda 1.6s ease-in-out infinite;
+}
+@media (min-width: 760px) { .portada { padding: 32px 32px 72px; } .portada .rotulo { top: 28px; left: 32px; } .portada .pista { display: block; } }
+
+/* entrada escalonada */
+.portada .entra { opacity: 0; transform: translateY(26px); animation: subir .9s cubic-bezier(.2,.7,.2,1) forwards; }
+.portada .entra:nth-child(1) { animation-delay: .15s; }
+.portada .entra:nth-child(2) { animation-delay: .35s; }
+.portada .entra:nth-child(3) { animation-delay: .55s; }
+.portada .entra:nth-child(4) { animation-delay: .75s; }
+@keyframes subir { to { opacity: 1; transform: none; } }
+@keyframes respira { from { transform: scale(1.06) translateY(0); } to { transform: scale(1.12) translateY(-1.5%); } }
+@keyframes rueda { 0% { opacity: 1; transform: translateY(0); } 70% { opacity: 0; transform: translateY(14px); } 100% { opacity: 0; } }
+
+/* ── Cinta que corre ───────────────────────────────────── */
+.cinta {
+  background: var(--accion); color: #fff; overflow: hidden; white-space: nowrap;
+  font: 700 15px/1 var(--f-texto); letter-spacing: .08em; text-transform: uppercase; padding: 14px 0;
+  transform: rotate(-1.2deg) scale(1.02); margin: -10px 0 -4px; position: relative; z-index: 2;
+}
+.cinta .carril { display: inline-block; animation: correr 28s linear infinite; }
+.cinta span { display: inline-block; padding: 0 22px; }
+.cinta span::after { content: '✦'; margin-left: 44px; opacity: .8; }
+@keyframes correr { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ── Aparición al hacer scroll ─────────────────────────── */
+.revela { opacity: 0; transform: translateY(28px); transition: opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1); }
+.revela.visto { opacity: 1; transform: none; }
+.revela[data-retardo="1"] { transition-delay: .12s; }
+.revela[data-retardo="2"] { transition-delay: .24s; }
+.revela[data-retardo="3"] { transition-delay: .36s; }
+
+/* ── Galería ───────────────────────────────────────────── */
+.galeria { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 36px; }
+.galeria figure { margin: 0; aspect-ratio: 3 / 4; border-radius: 18px; overflow: hidden; box-shadow: 0 18px 40px rgba(25,23,19,.14); transition: transform .5s cubic-bezier(.2,.7,.2,1); }
+.galeria figure:nth-child(1) { transform: rotate(-2.5deg) translateY(14px); }
+.galeria figure:nth-child(2) { transform: rotate(1.2deg) translateY(-10px); }
+.galeria figure:nth-child(3) { transform: rotate(2.5deg) translateY(16px); }
+.galeria figure:hover { transform: rotate(0) translateY(-6px) scale(1.03); }
+.galeria img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .8s; }
+.galeria figure:hover img { transform: scale(1.06); }
+@media (max-width: 560px) { .galeria { gap: 8px; margin-top: 26px; } .galeria figure { border-radius: 12px; } }
+
+/* ── Pasos numerados ───────────────────────────────────── */
+.seccion.oscura { background: var(--tinta); color: #fff; }
+.seccion.oscura .sello { color: #FF5C66; }
+.seccion.oscura .texto-grande { color: rgba(255,255,255,.78); }
+.seccion.oscura .texto-grande b { color: #fff; }
+.pasos3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 40px; }
+.paso3 { border: 1px solid rgba(255,255,255,.16); border-radius: 20px; padding: 26px 22px 24px; background: rgba(255,255,255,.04); position: relative; overflow: hidden; }
+.paso3 .num { font: 700 64px/1 var(--f-titulo); color: var(--accion); letter-spacing: -.03em; }
+.paso3 h3 { margin-top: 12px; font-size: 22px; }
+.paso3 p { margin-top: 8px; color: rgba(255,255,255,.78); font-size: 15.5px; line-height: 1.5; }
+.paso3::after { content: ''; position: absolute; right: -40px; top: -40px; width: 140px; height: 140px; border-radius: 50%; background: radial-gradient(circle, rgba(224,32,43,.28), transparent 70%); }
+@media (max-width: 760px) { .pasos3 { grid-template-columns: 1fr; gap: 12px; } .paso3 .num { font-size: 48px; } }
+
+/* ── Requisitos y fechas ───────────────────────────────── */
+.dos { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+@media (max-width: 760px) { .dos { grid-template-columns: 1fr; gap: 40px; } }
+.lista-check { list-style: none; padding: 0; margin: 22px 0 0; display: grid; gap: 12px; }
+.lista-check li { display: flex; gap: 12px; align-items: flex-start; font-size: 17px; line-height: 1.45; }
+.lista-check li::before {
+  content: '✓'; flex: 0 0 28px; width: 28px; height: 28px; border-radius: 50%; background: var(--marca-velo); color: var(--accion);
+  font-weight: 700; display: grid; place-items: center; font-size: 15px; margin-top: 1px;
+}
+.linea-tiempo { margin-top: 22px; display: grid; gap: 0; position: relative; }
+.linea-tiempo::before { content: ''; position: absolute; left: 9px; top: 12px; bottom: 12px; width: 2px; background: var(--linea-sutil); }
+.hito { display: grid; grid-template-columns: 20px 1fr; gap: 14px; padding: 10px 0; position: relative; }
+.hito::before { content: ''; width: 12px; height: 12px; border-radius: 50%; background: var(--capa-hundida); border: 3px solid var(--capa-0); margin: 6px 0 0 4px; box-shadow: 0 0 0 2px var(--linea-sutil); }
+.hito.fuerte::before { background: var(--accion); box-shadow: 0 0 0 2px var(--accion), 0 0 0 8px rgba(224,32,43,.15); }
+.hito b { display: block; font-size: 17px; }
+.hito span { color: var(--tinta-tenue); font-size: 14.5px; }
+
+/* ── El aviso de ropa ──────────────────────────────────── */
+.ropa {
+  background: var(--accion); color: #fff; border-radius: 28px; padding: 36px 26px; position: relative; overflow: hidden;
+  display: grid; grid-template-columns: 1fr; gap: 22px; box-shadow: 0 24px 60px rgba(224,32,43,.28);
+}
+.ropa::before {
+  content: ''; position: absolute; inset: -40% auto auto -20%; width: 70%; aspect-ratio: 1; border-radius: 50%;
+  background: rgba(255,255,255,.08); pointer-events: none;
+}
+.ropa .sello { color: #fff; opacity: .85; margin-bottom: 8px; }
+.ropa h2 { font-size: clamp(30px, 5.5vw, 56px); line-height: 1; letter-spacing: -.02em; max-width: 16ch; }
+.ropa p { font-size: clamp(16px, 2vw, 19px); line-height: 1.45; opacity: .95; max-width: 46ch; margin-top: 14px; }
+.ropa .muestras { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.ropa .muestras i {
+  width: 56px; height: 56px; border-radius: 50%; display: block; box-shadow: 0 6px 18px rgba(0,0,0,.18);
+  border: 3px solid rgba(255,255,255,.9); animation: late 3s ease-in-out infinite;
+}
+.ropa .muestras i:nth-child(2) { animation-delay: .3s; } .ropa .muestras i:nth-child(3) { animation-delay: .6s; }
+.ropa .muestras i:last-child { border-color: #fff; box-shadow: 0 0 0 4px rgba(255,255,255,.35), 0 6px 18px rgba(0,0,0,.2); animation-delay: .9s; }
+.ropa .muestras small { color: #fff; opacity: .85; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; font-weight: 700; margin-left: 4px; }
+@keyframes late { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@media (min-width: 760px) { .ropa { grid-template-columns: 1.3fr 1fr; align-items: center; padding: 56px 52px; } .ropa .muestras { justify-content: flex-end; } .ropa .muestras i { width: 72px; height: 72px; } }
+
+/* ── Privacidad + cierre ───────────────────────────────── */
+.privacidad-corta { max-width: 60ch; color: var(--tinta-media); font-size: 16px; line-height: 1.55; }
+.cierre { text-align: center; }
+.cierre h2 { font-size: clamp(34px, 6vw, 64px); letter-spacing: -.02em; line-height: 1; }
+.cierre .btn { margin-top: 26px; }
+.pie-landing { padding: 28px 20px 110px; text-align: center; font-size: 13.5px; color: var(--tinta-tenue); line-height: 1.7; border-top: 1px solid var(--linea-sutil); }
+.pie-landing a { color: inherit; }
+
+/* ── Botón fijo al pie (aparece al pasar la portada) ───── */
+.cta-fija {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+  background: rgba(251,248,246,.9); backdrop-filter: blur(10px); border-top: 1px solid var(--linea-sutil);
+  transform: translateY(110%); transition: transform .35s cubic-bezier(.2,.7,.2,1);
+}
+.cta-fija.visible { transform: none; }
+.cta-fija .dentro { max-width: var(--ancho); margin: 0 auto; display: flex; align-items: center; gap: 14px; }
+.cta-fija .dentro span { flex: 1; font-size: 14.5px; color: var(--tinta-media); display: none; }
+@media (min-width: 560px) { .cta-fija .dentro span { display: block; } .cta-fija .btn { min-width: 220px; } }
+.cta-fija .btn { flex: 1; }
+body.alegre .etiqueta-prueba { bottom: auto; top: 50px; right: 12px; font-size: 11px; padding: 7px 10px; }
+
+/* ── Pantalla final: recordatorio de ropa ──────────────── */
+.recordatorio {
+  margin-top: 18px; background: var(--marca-velo); border: 1px solid #F5C5C9; border-radius: 14px; padding: 14px 16px;
+  text-align: left; display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: center;
+}
+.recordatorio .muestras { display: flex; gap: 4px; }
+.recordatorio .muestras i { width: 18px; height: 18px; border-radius: 50%; display: block; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.15); }
+.recordatorio b { color: var(--accion); }
+.recordatorio p { font-size: 14.5px; line-height: 1.4; }
+
+@media (prefers-reduced-motion: reduce) {
+  .portada .fondo, .cinta .carril, .ropa .muestras i, .portada .pista::after { animation: none; }
+  .revela { opacity: 1; transform: none; transition: none; }
+  .portada .entra { animation: none; opacity: 1; transform: none; }
+}

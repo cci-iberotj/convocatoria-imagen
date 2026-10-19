@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Convocatoria · Respuestas</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23191713'/%3E%3Crect x='7' y='7' width='8' height='8' rx='2' fill='%237B1E2E'/%3E%3Crect x='17' y='7' width='8' height='8' rx='2' fill='%23F6E9EB'/%3E%3Crect x='7' y='17' width='8' height='8' rx='2' fill='%23F6E9EB'/%3E%3Crect x='17' y='17' width='8' height='8' rx='2' fill='%237B1E2E'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="tipografia.css?v=1.2">
+<link rel="stylesheet" href="estilos.css?v=1.2">
+</head>
+<body>
+<main class="hoja ancha">
+
+  <!-- ══ Entrada (sólo con motor supabase) ═══════════════ -->
+  <section id="entrada" class="tarjeta entrada oculto">
+    <p class="rotulo"><b id="rotulo-area"></b> <span class="barra">/</span> IBERO Tijuana</p>
+    <h2 style="margin-top:10px">Respuestas de la convocatoria</h2>
+    <p class="meta" style="margin-top:4px">Entra con tu cuenta de LA PIZARRA.</p>
+    <form id="form-entrar">
+      <label class="campo"><span>Correo</span><input name="correo" type="email" autocomplete="username" required></label>
+      <label class="campo"><span>Contraseña</span><input name="clave" type="password" autocomplete="current-password" required></label>
+      <div id="entrar-error" class="aviso peligro oculto"></div>
+      <button class="btn primario ancho" style="margin-top:18px">Entrar</button>
+    </form>
+  </section>
+
+  <!-- ══ Tablero ══════════════════════════════════════════ -->
+  <section id="tablero" class="oculto">
+    <div class="barra-equipo">
+      <div>
+        <p class="rotulo"><b id="rotulo-area-2"></b> <span class="barra">/</span> IBERO Tijuana</p>
+        <h1 id="titulo"></h1>
+        <span class="cuenta" id="cuenta"></span>
+      </div>
+      <div class="derecha">
+        <button class="btn secundario chico" id="btn-recargar">Actualizar</button>
+        <button class="btn primario chico" id="btn-csv">Exportar CSV</button>
+        <button class="btn secundario chico oculto" id="btn-muestra">Cargar datos de muestra</button>
+        <button class="btn secundario chico oculto" id="btn-salir">Salir</button>
+      </div>
+    </div>
+    <div id="aviso-motor" class="aviso info oculto"></div>
+
+    <div class="dos-columnas">
+      <!-- Mapa de calor -->
+      <div class="tarjeta">
+        <h2>Disponibilidad por hora</h2>
+        <p class="meta" style="margin-top:4px">Cuántas personas pueden en cada bloque. Toca un bloque para ver quiénes.</p>
+        <div class="calor" id="calor"></div>
+        <div class="calor-leyenda">
+          <span>Menos</span><i style="background:var(--marca-velo)"></i><i style="background:#D9A7B0"></i><i style="background:#A3505E"></i><i style="background:var(--marca-solida)"></i><span>Más</span>
+          <span style="margin-left:auto" id="calor-filtro"></span>
+        </div>
+      </div>
+
+      <!-- Lista -->
+      <div class="tarjeta">
+        <h2>Alumnos</h2>
+        <div class="filtros">
+          <label class="campo"><span>Buscar</span><input id="f-texto" type="search" placeholder="Nombre, matrícula, correo"></label>
+          <label class="campo"><span>Carrera</span><select id="f-carrera"><option value="">Todas</option></select></label>
+          <label class="campo"><span>Estado</span><select id="f-estado"><option value="">Todos</option></select></label>
+        </div>
+        <div class="lista" id="lista"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ══ Ficha de un alumno ══════════════════════════════════ -->
+<div id="velo" class="velo oculto">
+  <div class="ficha" role="dialog" aria-modal="true" aria-labelledby="ficha-nombre">
+    <button class="cerrar" id="ficha-cerrar" aria-label="Cerrar">×</button>
+    <div class="ficha-cabeza">
+      <img id="ficha-foto" alt="">
+      <div>
+        <h2 id="ficha-nombre"></h2>
+        <dl id="ficha-datos"></dl>
+      </div>
+    </div>
+    <h3 style="margin-top:18px">Disponibilidad <small id="ficha-horas"></small></h3>
+    <div class="mini" id="ficha-mini"></div>
+    <div class="fila" style="margin-top:6px">
+      <label class="campo"><span>Estado</span><select id="ficha-estado"></select></label>
+      <label class="campo"><span>Folio</span><input id="ficha-folio" type="text" readonly></label>
+    </div>
+    <label class="campo"><span>Nota del equipo</span><textarea id="ficha-nota" placeholder="Sesión asignada, observaciones…"></textarea></label>
+    <div id="ficha-aviso" class="aviso peligro oculto"></div>
+    <div class="acciones">
+      <button class="btn peligro" id="ficha-borrar">Borrar registro</button>
+      <button class="btn primario" id="ficha-guardar">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script src="config.js?v=1.2"></script>
+<script src="almacen.js?v=1.2"></script>
+<script src="equipo.js?v=1.2"></script>
+</body>
+</html>

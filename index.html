@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>La IBERO se ve como tú · Convocatoria</title>
+<meta name="description" content="Convocatoria para alumnas y alumnos de IBERO Tijuana que quieran ser la imagen de la universidad en fotos y video.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23E0202B'/%3E%3Ccircle cx='16' cy='13' r='5' fill='%23fff'/%3E%3Cpath d='M7 27c1.5-5 5-7 9-7s7.5 2 9 7z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="tipografia.css?v=1.2">
+<link rel="stylesheet" href="estilos.css?v=1.2">
+<link rel="stylesheet" href="inicio.css?v=1.2">
+</head>
+<body class="alegre">
+<main>
+
+  <!-- ══ Inicio · landing ═════════════════════════════════ -->
+  <section id="inicio" class="vista">
+
+    <header class="portada">
+      <img class="fondo" id="portada-foto" alt="">
+      <p class="rotulo"><b id="rotulo-area"></b> <span class="barra">/</span> IBERO Tijuana</p>
+      <div class="dentro">
+        <h1 class="entra" id="titulo"></h1>
+        <p class="bajada entra" id="bajada"></p>
+        <div class="acciones-portada entra">
+          <button id="btn-empezar" class="btn primario grande">Me apunto</button>
+          <a class="btn claro grande" href="#como">¿Cómo funciona?</a>
+        </div>
+        <p class="meta entra" style="color:rgba(255,255,255,.75);margin-top:16px">Son tres minutos. Ten a la mano tu matrícula y tómate una foto con tu cel.</p>
+      </div>
+      <div class="pista" aria-hidden="true"></div>
+    </header>
+
+    <div class="cinta" aria-hidden="true"><div class="carril" id="cinta"></div></div>
+
+    <section class="seccion" id="como">
+      <div class="dentro">
+        <span class="sello revela">¿A quién buscamos?</span>
+        <h2 class="titulo-seccion revela">A ti. Sí, a ti.</h2>
+        <p class="texto-grande revela" data-retardo="1">Si estudias en la IBERO, de <b>cualquier carrera y semestre</b>, y te late salir en las fotos y videos de la universidad (la página, las redes, las campañas), este es tu lugar. Gente real de la comunidad con ganas de representar a su carrera.</p>
+        <div class="galeria revela" data-retardo="2" id="galeria"></div>
+      </div>
+    </section>
+
+    <section class="seccion oscura">
+      <div class="dentro">
+        <span class="sello revela">¿Qué vas a hacer?</span>
+        <h2 class="titulo-seccion revela">Nosotros ponemos la producción. Tú, la actitud.</h2>
+        <div class="pasos3">
+          <div class="paso3 revela" data-retardo="1">
+            <div class="num">01</div>
+            <h3>Te apuntas</h3>
+            <p>Llenas este registro: tus datos, una foto para reconocerte y las horas en que puedes esa semana.</p>
+          </div>
+          <div class="paso3 revela" data-retardo="2">
+            <div class="num">02</div>
+            <h3>Te convocamos</h3>
+            <p>El <span id="txt-aviso"></span> te decimos si quedaste en esta ronda, y en qué sesión. Todas las personas reciben respuesta.</p>
+          </div>
+          <div class="paso3 revela" data-retardo="3">
+            <div class="num">03</div>
+            <h3>La sesión</h3>
+            <p>Una o dos sesiones de foto y video en el campus, de una a dos horas, entre el <span id="txt-rango"></span>. Te llevas <span id="txt-incentivo"></span>.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="seccion">
+      <div class="dentro dos">
+        <div>
+          <span class="sello revela">Lo único que necesitas</span>
+          <h2 class="titulo-seccion revela">Tres cosas.</h2>
+          <ul class="lista-check revela" data-retardo="1">
+            <li><span>Estar inscrito en la IBERO Tijuana, con matrícula vigente.</span></li>
+            <li><span>Tener 18 años cumplidos.</span></li>
+            <li><span>Un rato libre esa semana: al menos <b id="txt-minimo"></b> horas.</span></li>
+          </ul>
+        </div>
+        <div>
+          <span class="sello revela">Fechas</span>
+          <h2 class="titulo-seccion revela">Es ya.</h2>
+          <div class="linea-tiempo revela" data-retardo="1">
+            <div class="hito fuerte"><div><b>Regístrate hasta el <span id="txt-cierre"></span></b><span>Entre más pronto, mejor.</span></div></div>
+            <div class="hito"><div><b>Te decimos el <span id="txt-aviso-3"></span></b><span>Por WhatsApp o correo, quedes o no.</span></div></div>
+            <div class="hito"><div><b>Sesiones del <span id="txt-rango-3"></span></b><span>En el campus, según tu disponibilidad.</span></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="seccion" style="padding-top:0">
+      <div class="dentro">
+        <div class="ropa revela">
+          <div>
+            <span class="sello">El día de la sesión</span>
+            <h2 id="ropa-titulo"></h2>
+            <p id="ropa-texto"></p>
+          </div>
+          <div class="muestras" id="ropa-muestras"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="seccion" style="padding-top:0">
+      <div class="dentro">
+        <span class="sello revela">¿Cómo elegimos?</span>
+        <h2 class="titulo-seccion revela">Que estén todas las carreras.</h2>
+        <p class="texto-grande revela" data-retardo="1">Armamos las sesiones con la <b>disponibilidad que marques</b> y buscando que ninguna carrera se quede fuera. Si no quedas ahora, quedas en lista para la siguiente ronda.</p>
+        <details class="privacidad revela" data-retardo="2" style="margin-top:28px">
+          <summary>Tu privacidad y tu imagen</summary>
+          <p>Tus datos y la foto del registro sólo los ve el equipo de Comunicación, para convocarte; la foto no se publica. Si participas en una sesión, autorizas que tu imagen aparezca en materiales de la IBERO.</p>
+          <p><b>Tus datos.</b> Nombre, carrera, semestre, matrícula, correo, teléfono e Instagram sirven sólo para esta convocatoria: elegir, convocar y coordinar las sesiones. Los ve únicamente el equipo de Comunicación Institucional; no se comparten fuera de la universidad ni se usan para otra cosa.</p>
+          <p><b>La foto del registro.</b> Es sólo para relacionar tu nombre con tu cara al convocarte. No se publica y se borra al cerrar la convocatoria, junto con los datos de quienes no participaron.</p>
+          <p><b>Tu imagen en las sesiones.</b> Si participas, autorizas a la Universidad Iberoamericana Tijuana a captar, editar y usar tu imagen y tu voz, fija o en movimiento, en materiales institucionales (sitio web, redes sociales, impresos, campañas de admisión y promoción y publicidad en vía pública), sin límite de territorio. El día de la sesión firmas el formato de autorización de uso de imagen.</p>
+          <p><b>Puedes cambiar de opinión.</b> Puedes pedir que no se use tu imagen en materiales futuros escribiendo al contacto de abajo. Lo ya publicado o impreso no siempre se puede retirar.</p>
+          <p id="liga-aviso"></p>
+        </details>
+      </div>
+    </section>
+
+    <section class="seccion cierre">
+      <div class="dentro">
+        <h2 class="revela">¿Te animas?</h2>
+        <div id="aviso-cerrado" class="aviso alerta oculto" style="display:inline-block">El registro ya cerró. ¡Gracias por tu interés!</div>
+        <div class="revela" data-retardo="1"><button class="btn primario grande" data-empezar>Me apunto</button></div>
+      </div>
+    </section>
+
+    <footer class="pie-landing" id="pie-inicio"></footer>
+
+    <div class="cta-fija" id="cta-fija">
+      <div class="dentro">
+        <span>La IBERO se ve como tú · registro de tres minutos</span>
+        <button class="btn primario" data-empezar>Me apunto</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ Pasos ════════════════════════════════════════════ -->
+  <section id="pasos" class="vista hoja oculto">
+    <p class="rotulo"><b id="rotulo-area-2"></b> <span class="barra">/</span> IBERO Tijuana</p>
+    <div class="progreso" style="margin-top:14px">
+      <span class="paso-de" id="paso-de">Paso 1 de 4</span>
+      <span class="barra"><i id="barra-progreso" style="width:25%"></i></span>
+    </div>
+
+    <!-- Paso 1 · datos -->
+    <form id="paso-1" class="tarjeta paso" novalidate>
+      <h2>Cuéntanos de ti</h2>
+      <label class="campo">
+        <span>Nombre completo</span>
+        <input name="nombre" type="text" autocomplete="name" required minlength="5" maxlength="120" placeholder="Como aparece en tu credencial">
+        <small class="error">Escribe tu nombre completo.</small>
+      </label>
+      <div class="fila">
+        <label class="campo">
+          <span>Matrícula</span>
+          <input name="matricula" type="text" inputmode="numeric" autocomplete="off" required minlength="4" maxlength="20" placeholder="Número de cuenta">
+          <small class="error">Falta tu matrícula.</small>
+        </label>
+        <label class="campo">
+          <span>Semestre</span>
+          <select name="semestre" required><option value="">Elige</option></select>
+          <small class="error">Elige tu semestre.</small>
+        </label>
+      </div>
+      <label class="campo">
+        <span>Carrera</span>
+        <select name="carrera" required><option value="">Elige tu carrera</option></select>
+        <small class="error">Elige tu carrera.</small>
+      </label>
+      <label class="campo">
+        <span>Correo institucional</span>
+        <input name="correo" type="email" inputmode="email" autocomplete="email" required maxlength="120" placeholder="nombre@tijuana.ibero.mx">
+        <small class="ayuda" id="ayuda-correo"></small>
+        <small class="error">Escribe tu correo institucional completo.</small>
+      </label>
+      <label class="campo">
+        <span>Teléfono o WhatsApp</span>
+        <input name="telefono" type="tel" inputmode="tel" autocomplete="tel" required placeholder="10 dígitos">
+        <small class="ayuda">Por aquí te avisamos si quedas.</small>
+        <small class="error">Escribe un número de diez dígitos.</small>
+      </label>
+      <label class="campo">
+        <span>Instagram <em>· si quieres</em></span>
+        <input name="instagram" type="text" autocomplete="off" maxlength="40" placeholder="@usuario">
+      </label>
+      <div class="acciones">
+        <button type="button" class="btn secundario" data-atras>Atrás</button>
+        <button type="submit" class="btn primario">Siguiente</button>
+      </div>
+    </form>
+
+    <!-- Paso 2 · foto -->
+    <div id="paso-2" class="tarjeta paso oculto">
+      <h2>Una foto para reconocerte</h2>
+      <p class="intro">Sólo para saber quién eres cuando te convoquemos. No se publica. De frente, con buena luz y sin lentes oscuros.</p>
+      <div class="camara" id="camara">
+        <video id="video" autoplay playsinline muted class="oculto"></video>
+        <div class="guia oculto" id="guia"></div>
+        <img id="foto-vista" alt="" class="oculto">
+        <div class="vacio" id="camara-vacio"><span>Toca <b>Abrir la cámara</b> para tomarte la foto.</span></div>
+      </div>
+      <div id="camara-error" class="aviso alerta oculto"></div>
+      <div class="camara-acciones">
+        <button type="button" class="btn primario" id="btn-abrir-camara">Abrir la cámara</button>
+        <button type="button" class="btn primario oculto" id="btn-tomar">Tomar la foto</button>
+        <button type="button" class="btn secundario oculto" id="btn-repetir">Otra vez</button>
+        <button type="button" class="btn secundario" id="btn-subir">Subir una foto</button>
+        <input type="file" id="archivo" class="oculto" accept="image/*" capture="user">
+      </div>
+      <div class="acciones">
+        <button type="button" class="btn secundario" data-atras>Atrás</button>
+        <button type="button" class="btn primario" id="btn-foto-sig" disabled>Siguiente</button>
+      </div>
+    </div>
+
+    <!-- Paso 3 · disponibilidad -->
+    <div id="paso-3" class="tarjeta paso oculto">
+      <h2>¿Cuándo puedes?</h2>
+      <p class="intro">Marca <b>todas</b> las horas en que podrías estar en el campus del <span id="txt-rango-2"></span>. Toca o arrastra sobre las casillas; toca el día para marcarlo completo.</p>
+      <div class="rejilla-envoltura">
+        <div class="rejilla" id="rejilla" aria-label="Rejilla de disponibilidad"></div>
+        <div class="rejilla-pie">
+          <span>Marcaste <b id="cuenta-horas">0</b> horas</span>
+          <button type="button" class="btn suave" id="btn-limpiar">Limpiar</button>
+        </div>
+      </div>
+      <div id="aviso-horas" class="aviso alerta oculto"></div>
+      <div class="acciones">
+        <button type="button" class="btn secundario" data-atras>Atrás</button>
+        <button type="button" class="btn primario" id="btn-disp-sig">Siguiente</button>
+      </div>
+    </div>
+
+    <!-- Paso 4 · consentimiento -->
+    <div id="paso-4" class="tarjeta paso oculto">
+      <h2>Todo listo</h2>
+      <div class="resumen">
+        <img id="resumen-foto" alt="Tu foto">
+        <dl id="resumen-datos"></dl>
+      </div>
+      <p class="meta" style="margin-top:8px">Disponibilidad: <b id="resumen-horas"></b>. Si algo está mal, regresa con <b>Atrás</b>.</p>
+
+      <label class="casilla" id="casilla-datos">
+        <input type="checkbox" id="chk-datos">
+        <span>Acepto que Comunicación Institucional use estos datos y mi foto <b>sólo para esta convocatoria</b>, como dice el aviso de privacidad.</span>
+      </label>
+      <label class="casilla" id="casilla-imagen">
+        <input type="checkbox" id="chk-imagen">
+        <span>Si quedo convocado, <b>autorizo que mi imagen y mi voz aparezcan</b> en los materiales de la IBERO Tijuana, y firmaré la autorización el día de la sesión.</span>
+      </label>
+      <div id="aviso-envio" class="aviso peligro oculto"></div>
+      <div class="acciones">
+        <button type="button" class="btn secundario" data-atras>Atrás</button>
+        <button type="button" class="btn primario" id="btn-enviar">Enviar mi registro</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ Listo ════════════════════════════════════════════ -->
+  <section id="listo" class="vista hoja oculto">
+    <p class="rotulo"><b id="rotulo-area-3"></b> <span class="barra">/</span> IBERO Tijuana</p>
+    <div class="tarjeta centrado con-foto" style="margin-top:14px">
+      <img id="listo-foto" class="foto-cabecera" alt="">
+      <div class="cuerpo">
+        <h2 id="listo-titulo">¡Ya quedó!</h2>
+        <p class="intro">Tu registro está guardado. Te avisamos el <b id="txt-aviso-2"></b> por WhatsApp o correo, quedes o no.</p>
+        <div id="aviso-prueba" class="aviso alerta oculto"></div>
+        <div class="recordatorio">
+          <div class="muestras" id="recordatorio-muestras"></div>
+          <p><b id="recordatorio-titulo"></b><br>Por si te toca sesión: ve apartando la ropa.</p>
+        </div>
+        <p class="intro" style="margin-top:18px">Mientras, corre la voz en tu carrera: entre más carreras, mejor.</p>
+      </div>
+    </div>
+    <footer class="pie" id="pie-listo"></footer>
+  </section>
+
+</main>
+<div id="etiqueta-prueba" class="etiqueta-prueba oculto">Modo prueba · se puede avanzar sin llenar</div>
+<canvas id="lienzo" class="oculto"></canvas>
+<script src="config.js?v=1.2"></script>
+<script src="almacen.js?v=1.2"></script>
+<script src="formulario.js?v=1.2"></script>
+</body>
+</html>
