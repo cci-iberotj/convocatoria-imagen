@@ -19,6 +19,11 @@
 const Almacen = (() => {
   const LLAVE_LOCAL  = 'casting.respuestas';
   const LLAVE_SESION = 'casting.sesion';
+  /* La sesión de LA PIZARRA, en el mismo origen (cci-iberotj.github.io):
+     cuando equipo.html va incrustado en LA PIZARRA se usa esa sesión y
+     no se pide entrar otra vez. Se lee tal cual y NUNCA se refresca
+     desde aquí: refrescarla rotaría su token y sacaría a LA PIZARRA. */
+  const LLAVE_PIZARRA = 'la-pizarra-sesion';
   const ABC = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';   // sin 0/O/1/I/L
 
   function folio() {
@@ -78,8 +83,17 @@ const Almacen = (() => {
       } catch (e) {}
     },
     sesion() {
-      try { return JSON.parse(localStorage.getItem(LLAVE_SESION) || 'null'); }
-      catch (e) { return null; }
+      try {
+        const propia = JSON.parse(localStorage.getItem(LLAVE_SESION) || 'null');
+        if (propia) return propia;
+        const prestada = JSON.parse(localStorage.getItem(LLAVE_PIZARRA) || 'null');
+        if (prestada && prestada.acceso) return Object.assign({ prestada: true }, prestada);
+        return null;
+      } catch (e) { return null; }
+    },
+    usuario() {
+      const s = this.sesion();
+      return s ? (s.usuario || null) : null;
     },
 
     async _auth(ruta, cuerpo) {
@@ -100,6 +114,9 @@ const Almacen = (() => {
       const s = this.sesion();
       if (!s) throw new Error('SIN_SESION');
       if (Date.now() < s.expira - 60000) return s.acceso;
+      /* Prestada y vencida: LA PIZARRA la refresca por su lado; al
+         volver a leer el almacén saldrá la nueva. Aquí no se toca. */
+      if (s.prestada) throw new Error('SIN_SESION');
       try {
         const d = await this._auth('/token?grant_type=refresh_token', { refresh_token: s.refresco });
         this._recordar({ acceso: d.access_token, refresco: d.refresh_token,
@@ -157,6 +174,7 @@ const Almacen = (() => {
     },
     salir() { this._recordar(null); },
   };
+  local.usuario = () => local.sesion();
 
   const motor = CONFIG.motor === 'supabase' ? nube : local;
   return Object.assign({ folio, modo: CONFIG.motor }, {
@@ -167,6 +185,7 @@ const Almacen = (() => {
     entrar:     (c, k) => motor.entrar(c, k),
     salir:      () => motor.salir(),
     sesion:     () => motor.sesion(),
+    usuario:    () => motor.usuario(),
     necesitaSesion: motor.necesitaSesion,
   });
 })();

@@ -29,6 +29,11 @@ function pintarTextos() {
   }
 }
 
+/* Incrustado en LA PIZARRA (?incrustado): sin cabecera ni «Salir»,
+   y con su sesión prestada; la pestaña de LA PIZARRA ya dice qué es. */
+const INCRUSTADO = new URLSearchParams(location.search).has('incrustado');
+if (INCRUSTADO) document.body.classList.add('incrustado');
+
 async function arrancar() {
   pintarTextos();
   if (Almacen.necesitaSesion && !Almacen.sesion()) { $('#entrada').classList.remove('oculto'); return; }
@@ -190,7 +195,7 @@ document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && abierto)
 $('#ficha-guardar').addEventListener('click', async () => {
   if (!abierto) return;
   const cambios = { estado: $('#ficha-estado').value, nota: $('#ficha-nota').value.trim(),
-                    atendido_por: (Almacen.sesion() || {}).nombre || '' };
+                    atendido_por: (Almacen.usuario() || {}).nombre || '' };
   try {
     await Almacen.actualizar(abierto, cambios);
     Object.assign(todos.find(x => x.folio === abierto), cambios);

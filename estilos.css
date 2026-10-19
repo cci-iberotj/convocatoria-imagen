@@ -312,6 +312,14 @@ footer.pie a { color: inherit; }
 .mini .c.si { background: var(--marca-solida); }
 .ficha .acciones { justify-content: space-between; }
 
+/* incrustado en LA PIZARRA */
+body.incrustado { background: transparent; }
+body.incrustado::before { display: none; }
+body.incrustado .hoja { padding: 6px 4px 30px; }
+body.incrustado .barra-equipo .rotulo, body.incrustado .barra-equipo h1,
+body.incrustado #aviso-motor, body.incrustado #btn-salir { display: none !important; }
+body.incrustado .entrada { margin-top: 20px; }
+
 /* entrada del equipo */
 .entrada { max-width: 380px; margin: 40px auto; }
 
