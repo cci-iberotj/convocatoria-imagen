@@ -6,8 +6,8 @@
 <title>Convocatoria · Respuestas</title>
 <meta name="robots" content="noindex">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23191713'/%3E%3Crect x='7' y='7' width='8' height='8' rx='2' fill='%237B1E2E'/%3E%3Crect x='17' y='7' width='8' height='8' rx='2' fill='%23F6E9EB'/%3E%3Crect x='7' y='17' width='8' height='8' rx='2' fill='%23F6E9EB'/%3E%3Crect x='17' y='17' width='8' height='8' rx='2' fill='%237B1E2E'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="tipografia.css?v=1.10">
-<link rel="stylesheet" href="estilos.css?v=1.10">
+<link rel="stylesheet" href="tipografia.css?v=1.11">
+<link rel="stylesheet" href="estilos.css?v=1.11">
 </head>
 <body>
 <main class="hoja ancha">
@@ -31,7 +31,7 @@
       <div>
         <p class="rotulo"><b id="rotulo-area-2"></b> <span class="barra">/</span> IBERO Tijuana</p>
         <h1 id="titulo"></h1>
-        <span class="cuenta" id="cuenta"></span>
+        <span class="cuenta" id="cuenta" hidden></span>
       </div>
       <div class="derecha">
         <button class="btn secundario chico" id="btn-recargar">Actualizar</button>
@@ -42,10 +42,23 @@
     </div>
     <div id="aviso-motor" class="aviso info oculto"></div>
 
-    <!-- Cifras y carreras -->
-    <section class="tarjeta">
+    <!-- Estadísticas -->
+    <section class="tarjeta estadisticas">
       <div class="cifras" id="cifras"></div>
-      <div class="carreras" id="carreras"></div>
+      <div class="paneles">
+        <div class="panel">
+          <h3>Por carrera <small>· toca una para filtrar</small></h3>
+          <div class="barras" id="carreras"></div>
+          <p class="faltan meta" id="faltan"></p>
+        </div>
+        <div class="panel">
+          <h3>Género</h3>
+          <div class="genero-barra" id="genero"></div>
+          <p class="meta" id="genero-nota"></p>
+          <h3 style="margin-top:18px">Mejores bloques <small>· más gente disponible</small></h3>
+          <ol class="mejores" id="mejores"></ol>
+        </div>
+      </div>
     </section>
 
     <div class="tablero-dos">
@@ -64,7 +77,7 @@
 
     <!-- Fichas -->
     <section class="tarjeta">
-      <div class="cabeza-seccion">
+      <div class="cabeza-seccion fichas-cabeza">
         <h2 id="titulo-fichas">Fichas</h2>
         <div class="filtros compactos">
           <label class="campo"><span>Buscar</span><input id="f-texto" type="search" placeholder="Nombre, correo, teléfono"></label>
@@ -93,6 +106,7 @@
     <div class="mini" id="ficha-mini"></div>
     <div class="fila" style="margin-top:6px">
       <label class="campo"><span>Estado</span><select id="ficha-estado"></select></label>
+      <label class="campo"><span>Género</span><select id="ficha-genero"></select></label>
       <label class="campo"><span>Folio</span><input id="ficha-folio" type="text" readonly></label>
     </div>
     <label class="campo"><span>Nota del equipo</span><textarea id="ficha-nota" placeholder="Sesión asignada, observaciones…"></textarea></label>
@@ -109,8 +123,8 @@
   <img id="lupa-foto" alt="">
   <div class="lupa-pie"><span id="lupa-nombre"></span><button type="button" class="btn secundario chico" id="lupa-cerrar">Cerrar</button></div>
 </div>
-<script src="config.js?v=1.10"></script>
-<script src="almacen.js?v=1.10"></script>
-<script src="equipo.js?v=1.10"></script>
+<script src="config.js?v=1.11"></script>
+<script src="almacen.js?v=1.11"></script>
+<script src="equipo.js?v=1.11"></script>
 </body>
 </html>

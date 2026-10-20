@@ -166,8 +166,16 @@ const CONFIG = {
      cara y ligero para la base. */
   foto: { lado: 640, calidad: 0.82 },
 
+  /* Género: lo pregunta el formulario (para que el equipo pueda
+     balancear) y se puede corregir desde la ficha. */
+  generos: [
+    { id: 'mujer',  nombre: 'Mujer' },
+    { id: 'hombre', nombre: 'Hombre' },
+    { id: 'otro',   nombre: 'Prefiero no decirlo' },
+  ],
+
   /* Estados que el equipo le pone a cada registro. */
   estados: ['nueva', 'convocada', 'descartada'],
 
-  version: '1.10',
+  version: '1.11',
 };

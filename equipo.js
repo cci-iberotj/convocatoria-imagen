@@ -13,6 +13,9 @@ const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&am
 let todos = [];            // lo que vino del almacén
 let bloqueElegido = null;  // clave 'iso|HH' del mapa de calor, o null
 let filtroCarrera = '';    // carrera elegida en el panel de arriba, o ''
+let filtroGenero = '';     // 'mujer' | 'hombre' | 'otro' | 'sin' | ''
+const GENEROS = Object.fromEntries((CONFIG.generos || []).map(g => [g.id, g.nombre]));
+const generoDe = r => r.genero || 'sin';
 const COLORES = CONFIG.coloresCarreras || [];
 const colorDe = carrera => COLORES[CONFIG.carreras.indexOf(carrera)] || '#655C54';
 let abierto = null;        // folio de la ficha abierta
@@ -22,6 +25,8 @@ function pintarTextos() {
   $$('#rotulo-area, #rotulo-area-2').forEach(e => e.textContent = CONFIG.area);
   $('#titulo').textContent = CONFIG.titulo + ' · respuestas';
   CONFIG.estados.forEach(e => { $('#f-estado').append(new Option(e, e)); $('#ficha-estado').append(new Option(e, e)); });
+  $('#ficha-genero').append(new Option('Sin dato', ''));
+  (CONFIG.generos || []).forEach(g => $('#ficha-genero').append(new Option(g.nombre, g.id)));
   if (Almacen.modo === 'local') {
     const a = $('#aviso-motor');
     a.textContent = 'Modo local: las respuestas viven en este navegador (config.js → motor). Sirve para revisar el diseño; para la convocatoria real se cambia a Supabase.';
@@ -75,6 +80,7 @@ function filtrados() {
   return todos.filter(r =>
     (!q || [r.nombre, r.correo, r.telefono].some(v => String(v || '').toLowerCase().includes(q))) &&
     (!car || r.carrera === car) &&
+    (!filtroGenero || generoDe(r) === filtroGenero) &&
     (!est || (r.estado || 'nueva') === est) &&
     (!bloqueElegido || (r.disponibilidad || []).includes(bloqueElegido)));
 }
@@ -83,11 +89,10 @@ function filtrados() {
 function pintarTodo() {
   pintarCifras();
   pintarCarreras();
+  pintarGenero();
   pintarCalor();
+  pintarMejores();
   pintarLista();
-  const activos = todos.filter(r => r.estado !== 'descartada').length;
-  $('#cuenta').textContent = todos.length + ' registros · ' + activos + ' en juego · ' +
-    todos.filter(r => r.estado === 'convocada').length + ' convocados';
 }
 
 /* ── Cifras y carreras ──────────────────────────────────── */
@@ -103,6 +108,10 @@ function pintarCifras() {
     `<div><b>${conv}</b><span>convocado${conv === 1 ? '' : 's'}</span></div>` +
     `<div><b>${egr}</b><span>egresado${egr === 1 ? '' : 's'}</span></div>` +
     `<div><b>${carrerasCon}</b><span>de ${CONFIG.carreras.length} carreras</span></div>`;
+  const sinDato = todos.filter(r => !r.genero).length;
+  $('#genero-nota').textContent = sinDato
+    ? sinDato + (sinDato === 1 ? ' registro sin dato de género: se completa desde su ficha.' : ' registros sin dato de género: se completan desde su ficha.')
+    : '';
 }
 
 /* Un chip por carrera con su color y cuántos van (sin descartados);
@@ -111,12 +120,55 @@ function pintarCarreras() {
   const caja = $('#carreras');
   const cuenta = {};
   todos.filter(r => r.estado !== 'descartada').forEach(r => { cuenta[r.carrera] = (cuenta[r.carrera] || 0) + 1; });
-  caja.innerHTML = CONFIG.carreras.map(c => {
+  const total = Object.values(cuenta).reduce((a, b) => a + b, 0) || 1;
+  const max = Math.max(1, ...Object.values(cuenta));
+  const orden = CONFIG.carreras.slice().sort((a, b) => (cuenta[b] || 0) - (cuenta[a] || 0) || CONFIG.carreras.indexOf(a) - CONFIG.carreras.indexOf(b));
+  caja.innerHTML = orden.map(c => {
     const n = cuenta[c] || 0;
-    return `<button type="button" class="carrera-chip${n ? '' : ' vacio'}${filtroCarrera === c ? ' activo' : ''}" data-carrera="${esc(c)}" style="--tono:${colorDe(c)}"><i></i>${esc(c)} <b>${n}</b></button>`;
+    const pct = Math.round(100 * n / total);
+    return `<button type="button" class="barra${n ? '' : ' cero'}${filtroCarrera === c ? ' activo' : ''}" data-carrera="${esc(c)}" style="--tono:${colorDe(c)}" title="${esc(c)}: ${n} (${pct}%)">
+      <span class="nombre"><i></i>${esc(c)}</span>
+      <span class="pista"><b style="width:${Math.round(100 * n / max)}%"></b></span>
+      <span class="n">${n} <small>${n ? pct + '%' : ''}</small></span>
+    </button>`;
   }).join('');
-  $$('#carreras .carrera-chip').forEach(b => b.addEventListener('click', () => {
+  $$('#carreras .barra').forEach(b => b.addEventListener('click', () => {
     filtroCarrera = filtroCarrera === b.dataset.carrera ? '' : b.dataset.carrera;
+    pintarTodo();
+  }));
+  const faltan = CONFIG.carreras.filter(c => !cuenta[c]);
+  $('#faltan').innerHTML = faltan.length
+    ? '<b>Sin registros:</b> ' + faltan.map(esc).join(', ') + '.'
+    : 'Todas las carreras tienen al menos un registro.';
+}
+
+/* ── Género: una barra apilada; tocar un tramo filtra ───── */
+function pintarGenero() {
+  const base = todos.filter(r => r.estado !== 'descartada' && (!filtroCarrera || r.carrera === filtroCarrera));
+  const cuenta = { mujer: 0, hombre: 0, otro: 0, sin: 0 };
+  base.forEach(r => { cuenta[generoDe(r)] = (cuenta[generoDe(r)] || 0) + 1; });
+  const total = base.length || 1;
+  const nombres = { mujer: 'Mujeres', hombre: 'Hombres', otro: 'Sin decir', sin: 'Sin dato' };
+  $('#genero').innerHTML = ['mujer', 'hombre', 'otro', 'sin'].filter(k => cuenta[k]).map(k =>
+    `<button type="button" class="${k}${filtroGenero === k ? ' activo' : ''}" data-genero="${k}" style="flex:${cuenta[k]}" title="${nombres[k]}: ${cuenta[k]} (${Math.round(100 * cuenta[k] / total)}%)">${cuenta[k] / total < 0.18 ? cuenta[k] : nombres[k] + ' ' + cuenta[k] + ' · ' + Math.round(100 * cuenta[k] / total) + '%'}</button>`
+  ).join('') || '<span class="meta" style="padding:4px 10px">Sin registros</span>';
+  $$('#genero button').forEach(b => b.addEventListener('click', () => {
+    filtroGenero = filtroGenero === b.dataset.genero ? '' : b.dataset.genero;
+    pintarTodo();
+  }));
+}
+
+/* ── Mejores bloques: los cinco con más gente ───────────── */
+function pintarMejores() {
+  const c = conteos();
+  const lista = Object.entries(c).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  $('#mejores').innerHTML = lista.map(([k, n]) => {
+    const [iso, hh] = k.split('|');
+    const d = Semana.dias.find(x => x.iso === iso);
+    return `<li data-bloque="${k}"><b>${n}</b> <span>personas ·</span> ${d.dia} ${d.num}, ${hh}:00–${String(Number(hh) + 1).padStart(2, '0')}:00</li>`;
+  }).join('') || '<li class="meta">Todavía no hay disponibilidad registrada.</li>';
+  $$('#mejores li[data-bloque]').forEach(li => li.addEventListener('click', () => {
+    bloqueElegido = bloqueElegido === li.dataset.bloque ? null : li.dataset.bloque;
     pintarTodo();
   }));
 }
@@ -204,9 +256,8 @@ function pintarLista() {
       <div class="cuerpo">
         <div class="nombre">${esc(r.nombre)}</div>
         <div class="carrera"><i></i><span>${esc(r.carrera)} · ${semestreTexto(r.semestre)}</span></div>
-        <div class="contacto">${telefono(r.telefono)}</div>
+        <div class="contacto">${telefono(r.telefono)}${r.genero ? ' · ' + esc(GENEROS[r.genero] || r.genero) : ''}</div>
         <div class="dias">${dias}</div>
-        <div class="cuando">${fecha(r.creado)}</div>
       </div>
     </button>`;
   }).join('');
@@ -237,6 +288,7 @@ function abrirFicha(folio) {
   });
   mini.innerHTML = h;
   $('#ficha-estado').value = r.estado || 'nueva';
+  $('#ficha-genero').value = r.genero || '';
   $('#ficha-folio').value = r.folio;
   $('#ficha-nota').value = r.nota || '';
   $('#ficha-aviso').classList.add('oculto');
@@ -268,7 +320,7 @@ document.addEventListener('keydown', ev => {
 
 $('#ficha-guardar').addEventListener('click', async () => {
   if (!abierto) return;
-  const cambios = { estado: $('#ficha-estado').value, nota: $('#ficha-nota').value.trim(),
+  const cambios = { estado: $('#ficha-estado').value, nota: $('#ficha-nota').value.trim(), genero: $('#ficha-genero').value,
                     atendido_por: (Almacen.usuario() || {}).nombre || '' };
   try {
     await Almacen.actualizar(abierto, cambios);
@@ -298,11 +350,11 @@ $('#btn-csv').addEventListener('click', () => {
   const vistos = filtrados();
   const bloques = [];
   Semana.dias.forEach(d => Semana.horas.forEach(h => bloques.push({ k: Semana.clave(d.iso, h), t: d.corto + ' ' + d.num + ' ' + Semana.hh(h) })));
-  const cab = ['folio', 'nombre', 'carrera', 'semestre', 'correo', 'telefono',
+  const cab = ['folio', 'nombre', 'carrera', 'semestre', 'genero', 'correo', 'telefono',
                'estado', 'nota', 'horas', 'registrado', ...bloques.map(b => b.t)];
   const filas = vistos.map(r => {
     const d = new Set(r.disponibilidad || []);
-    return [r.folio, r.nombre, r.carrera, semestreTexto(r.semestre), r.correo, r.telefono,
+    return [r.folio, r.nombre, r.carrera, semestreTexto(r.semestre), GENEROS[r.genero] || '', r.correo, r.telefono,
             r.estado || 'nueva', r.nota, d.size, r.creado, ...bloques.map(b => d.has(b.k) ? 'x' : '')];
   });
   const celda = v => { const s = String(v == null ? '' : v); return /[",\n;]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };

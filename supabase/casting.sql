@@ -43,6 +43,10 @@ create table if not exists public.casting (
   creado         timestamptz not null default now()
 );
 
+-- Género (desde el 20-oct-2026): mujer / hombre / otro, o vacío en los
+-- registros anteriores, que el equipo completa desde la ficha.
+alter table public.casting add column if not exists genero text not null default '';
+
 alter table public.casting drop constraint if exists casting_estado_check;
 alter table public.casting add constraint casting_estado_check
   check (estado in ('nueva', 'convocada', 'descartada'));
@@ -83,6 +87,7 @@ create policy "registrarse" on public.casting
     and semestre between 0 and 12            -- 0 = egresado (desde el 20-oct-2026)
     and char_length(correo)    between 6 and 120
     and telefono ~ '^[0-9]{10}$'
+    and genero in ('', 'mujer', 'hombre', 'otro')
     and char_length(instagram) <= 40
     and (consentimientos->>'datos')::boolean = true
     and (consentimientos->>'imagen')::boolean = true

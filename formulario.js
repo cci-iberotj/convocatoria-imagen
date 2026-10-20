@@ -12,7 +12,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 
 const registro = {
   folio: '', nombre: '', matricula: '', carrera: '', semestre: 0,
-  correo: '', telefono: '', instagram: '', foto: '',
+  correo: '', telefono: '', instagram: '', genero: '', foto: '',
   disponibilidad: [], consentimientos: { datos: false, imagen: false },
   estado: 'nueva', nota: '', atendido_por: '', creado: '',
 };
@@ -75,6 +75,8 @@ function pintarTextos() {
   const sel = $('select[name=semestre]');
   for (let i = 1; i <= CONFIG.semestres; i++) sel.append(new Option(i + '°', i));
   sel.append(new Option(CONFIG.egresado, 0));
+  const gen = $('select[name=genero]');
+  CONFIG.generos.forEach(g => gen.append(new Option(g.nombre, g.id)));
   const car = $('select[name=carrera]');
   CONFIG.carreras.forEach(c => car.append(new Option(c, c)));
 
@@ -126,6 +128,7 @@ $('#paso-1').addEventListener('submit', ev => {
   ok &= marcar(f.elements.nombre, v('nombre').split(/\s+/).length < 2 || v('nombre').length < 5);
   ok &= marcar(f.elements.semestre, v('semestre') === '');
   ok &= marcar(f.elements.carrera, !v('carrera'));
+  ok &= marcar(f.elements.genero, !v('genero'));
   const correo = v('correo').toLowerCase();
   const correoOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo) &&
                    (!CONFIG.dominioCorreo || correo.endsWith(CONFIG.dominioCorreo));
@@ -140,6 +143,7 @@ $('#paso-1').addEventListener('submit', ev => {
   registro.carrera   = v('carrera');
   registro.correo    = correo;
   registro.telefono  = tel;
+  registro.genero    = v('genero');
   irA(2);
 });
 

@@ -240,6 +240,7 @@ footer.pie a { color: inherit; }
   display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-bottom: 18px;
 }
 .barra-equipo h1 { font-size: 26px; }
+.barra-equipo .rotulo { display: block; }
 .barra-equipo .cuenta { font-size: 14px; color: var(--tinta-tenue); }
 .barra-equipo .derecha { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
 .btn.chico { min-height: 38px; padding: 0 14px; font-size: 14px; }
@@ -267,6 +268,39 @@ footer.pie a { color: inherit; }
 .calor .c.elegida { border-color: var(--tinta); }
 .calor-leyenda { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 12.5px; color: var(--tinta-tenue); }
 .calor-leyenda i { display: inline-block; width: 18px; height: 12px; border-radius: 3px; }
+
+/* estadísticas */
+.estadisticas .paneles { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 28px; margin-top: 16px; }
+@media (max-width: 900px) { .estadisticas .paneles { grid-template-columns: 1fr; } }
+.panel h3 { font-size: 15px; margin-bottom: 10px; }
+.panel h3 small { font-weight: 400; color: var(--tinta-tenue); font-size: 12.5px; }
+.barras { display: grid; gap: 5px; }
+.barra {
+  display: grid; grid-template-columns: minmax(120px, 190px) 1fr 44px; align-items: center; gap: 10px;
+  background: none; border: 0; padding: 3px 4px; border-radius: 8px; font: inherit; color: var(--tinta); cursor: pointer; text-align: left;
+}
+.barra:hover { background: var(--capa-1); }
+.barra.activo { background: color-mix(in srgb, var(--tono) 12%, white); }
+.barra .nombre { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 7px; }
+.barra .nombre i { width: 9px; height: 9px; border-radius: 50%; background: var(--tono); flex: none; }
+.barra .pista { height: 14px; background: var(--capa-hundida); border-radius: 7px; overflow: hidden; }
+.barra .pista b { display: block; height: 100%; background: var(--tono); border-radius: 7px; min-width: 2px; }
+.barra .n { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
+.barra .n small { font-weight: 400; color: var(--tinta-tenue); font-size: 11px; }
+.barra.cero { opacity: .55; }
+.barra.cero .pista b { display: none; }
+.faltan { margin-top: 10px; font-size: 13px; }
+.faltan b { color: var(--peligro); }
+.genero-barra { display: flex; height: 26px; border-radius: 8px; overflow: hidden; background: var(--capa-hundida); }
+.genero-barra button { border: 0; padding: 0 8px; min-width: 34px; color: #fff; font: 700 13px var(--f-texto); cursor: pointer; white-space: nowrap; overflow: hidden; }
+.genero-barra button.activo { outline: 3px solid var(--tinta); outline-offset: -3px; }
+.genero-barra .mujer { background: #A32A6E; } .genero-barra .hombre { background: #2F4E7A; } .genero-barra .otro { background: #655C54; } .genero-barra .sin { background: #B9B0A8; color: var(--tinta); }
+.mejores { margin: 0; padding-left: 20px; font-size: 13.5px; display: grid; gap: 4px; }
+.mejores li span { color: var(--tinta-tenue); }
+.mejores li b { font-variant-numeric: tabular-nums; }
+.mejores li { cursor: pointer; }
+.mejores li:hover { color: var(--marca-tinta); }
+.fichas-cabeza { align-items: center; }
 
 /* cifras y carreras */
 .cifras { display: flex; flex-wrap: wrap; gap: 8px 28px; align-items: baseline; }
@@ -317,7 +351,9 @@ footer.pie a { color: inherit; }
 .ficha-mini .dias { display: flex; gap: 3px; margin-top: 3px; max-width: 150px; }
 .ficha-mini .dias i { flex: 1; height: 16px; border-radius: 3px; background: var(--capa-hundida); font-size: 10px; font-style: normal; font-weight: 700; color: var(--tinta-tenue); display: grid; place-items: center; }
 .ficha-mini .dias i.si { background: var(--marca-solida); color: #fff; }
-.ficha-mini .cuando { font-size: 11px; color: var(--tinta-tenue); }
+.ficha-mini .cuando { display: none; }
+.ficha-mini .retrato .chip.nueva { display: none; }
+.ficha-mini .genero { font-size: 11px; color: var(--tinta-tenue); }
 @media (max-width: 480px) { .fichas { grid-template-columns: 1fr; gap: 8px; } }
 
 /* lista de alumnos (versión anterior, por si se usa) */
