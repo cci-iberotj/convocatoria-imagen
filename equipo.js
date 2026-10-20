@@ -192,7 +192,7 @@ function pintarLista() {
     const disp = new Set(r.disponibilidad || []);
     const dias = Semana.dias.map(d => {
       const n = Semana.horas.filter(h => disp.has(Semana.clave(d.iso, h))).length;
-      return `<i class="${n ? 'si' : ''}" title="${d.dia} ${d.num}: ${n} h">${d.corto[0].toUpperCase()}</i>`;
+      return `<i class="${n ? 'si' : ''}" title="${d.dia} ${d.num}: ${n} h">${d.corto === 'mié' ? 'X' : d.corto[0].toUpperCase()}</i>`;
     }).join('');
     return `
     <button class="ficha-mini" data-folio="${esc(r.folio)}" style="--tono:${colorDe(r.carrera)}">
@@ -203,7 +203,7 @@ function pintarLista() {
       </div>
       <div class="cuerpo">
         <div class="nombre">${esc(r.nombre)}</div>
-        <div class="carrera"><i></i>${esc(r.carrera)} · ${semestreTexto(r.semestre)}</div>
+        <div class="carrera"><i></i><span>${esc(r.carrera)} · ${semestreTexto(r.semestre)}</span></div>
         <div class="contacto">${telefono(r.telefono)}</div>
         <div class="dias">${dias}</div>
         <div class="cuando">${fecha(r.creado)}</div>

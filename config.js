@@ -169,5 +169,5 @@ const CONFIG = {
   /* Estados que el equipo le pone a cada registro. */
   estados: ['nueva', 'convocada', 'descartada'],
 
-  version: '1.9',
+  version: '1.10',
 };

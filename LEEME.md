@@ -7,7 +7,7 @@ Tres piezas en una carpeta:
 |---|---|
 | `convocatoria.md` | El texto completo de la convocatoria para revisar con el equipo, con las decisiones pendientes marcadas **[así]** y una recomendación para cada una. |
 | `index.html` | La página que ven los alumnos (celular primero): landing con portada a pantalla completa, cinta, galería, pasos, aviso de ropa; y luego el registro: nombre, carrera (con «Posgrados»), semestre, correo, teléfono; foto con la cámara, rejilla de disponibilidad y consentimiento. Sin matrícula ni Instagram (Leo, 19-oct); un registro por correo. Abierta también a egresados (20-oct): cualquier correo y la opción «Egresado/a» en semestre (se guarda como semestre 0). Los estilos de la landing están en `inicio.css`; los del registro y la vista del equipo en `estilos.css`. |
-| `equipo.html` | La vista del equipo: lista con foto, contacto, mapa de calor de disponibilidad, ficha con estado y nota, borrado y exportación a CSV. |
+| `equipo.html` | La vista del equipo: cifras (registros, en juego, convocados, egresados, carreras cubiertas), panel de carreras con conteo y color (tocar una filtra), mapa de calor de disponibilidad, fichas en rejilla con foto, marca de color de la carrera, días disponibles y estado; ficha completa con foto en grande, estado y nota, borrado y exportación a CSV. Los colores por carrera están en `config.js → coloresCarreras`. |
 
 **Publicado:** https://cci-iberotj.github.io/convocatoria-imagen/. Los registros se ven en **LA PIZARRA → pestaña Convocatoria** (globo con los nuevos; la vista del equipo va incrustada con la misma sesión) o sueltos en `/equipo.html` con cuenta de LA PIZARRA. Las respuestas se guardan en la base de LA PIZARRA (tabla `casting`, creada el 19-oct-2026).
 

@@ -75,7 +75,7 @@ small, .meta { font-size: 13.5px; color: var(--tinta-tenue); }
 /* ── Hoja centrada ──────────────────────────────────────── */
 .hoja { width: 100%; max-width: 560px; margin: 0 auto; padding: 28px 16px 72px; box-sizing: border-box; }
 section.hoja.oculto { display: none !important; }
-.hoja.ancha { max-width: 1120px; }
+.hoja.ancha { max-width: none; padding-left: 20px; padding-right: 20px; }
 
 .tarjeta {
   background: var(--capa-2); border: 1px solid var(--linea-sutil);
@@ -287,32 +287,38 @@ footer.pie a { color: inherit; }
 .cabeza-seccion .meta { margin-top: 2px; }
 .filtros.compactos { margin-top: 0; }
 .filtros.compactos .campo { flex: 0 1 200px; }
-.calor.ancho { grid-template-columns: 52px repeat(var(--dias, 5), 1fr); max-width: 760px; }
-.calor.ancho .c { min-height: 26px; font-size: 12.5px; }
+.calor.ancho { grid-template-columns: 52px repeat(var(--dias, 5), 1fr); }
+.calor.ancho .c { min-height: 30px; font-size: 13px; }
+/* dos columnas: el calendario a la izquierda, fijo al hacer scroll; las fichas a la derecha */
+.tablero-dos { display: grid; grid-template-columns: minmax(380px, 460px) minmax(0, 1fr); gap: 14px; margin-top: 14px; align-items: start; }
+.tablero-dos > .tarjeta { margin-top: 0; }
+.columna-calor { position: sticky; top: 12px; }
+@media (max-width: 1000px) { .tablero-dos { grid-template-columns: 1fr; } .columna-calor { position: static; } }
 
-/* fichas en rejilla */
-.fichas { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 12px; margin-top: 14px; }
+/* fichas compactas en rejilla: foto chica a la izquierda, datos a la derecha */
+.fichas { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 10px; margin-top: 14px; }
 .ficha-mini {
-  background: var(--capa-2); border: 1px solid var(--linea-sutil); border-radius: 14px; overflow: hidden; cursor: pointer;
-  text-align: left; font: inherit; color: inherit; padding: 0; display: flex; flex-direction: column;
-  border-top: 5px solid var(--tono, var(--linea-sutil)); transition: box-shadow .15s, transform .15s;
+  background: var(--capa-2); border: 1px solid var(--linea-sutil); border-radius: 12px; overflow: hidden; cursor: pointer;
+  text-align: left; font: inherit; color: inherit; padding: 0; display: grid; grid-template-columns: 96px 1fr; gap: 10px;
+  border-left: 5px solid var(--tono, var(--linea-sutil)); transition: box-shadow .15s, transform .15s;
 }
-.ficha-mini:hover { box-shadow: var(--sombra); transform: translateY(-2px); }
-.ficha-mini .retrato { position: relative; aspect-ratio: 4 / 4.6; background: var(--capa-hundida); }
-.ficha-mini .retrato img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.ficha-mini .retrato .sinfoto { position: absolute; inset: 0; display: grid; place-items: center; font: 700 42px var(--f-titulo); color: var(--tinta-tenue); }
-.ficha-mini .retrato .chip { position: absolute; left: 8px; top: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
-.ficha-mini .retrato .horas { position: absolute; right: 8px; bottom: 8px; background: rgba(25,23,19,.78); color: #fff; font-size: 12.5px; font-weight: 700; padding: 3px 9px; border-radius: 12px; }
-.ficha-mini .cuerpo { padding: 10px 12px 12px; display: grid; gap: 4px; }
-.ficha-mini .nombre { font-weight: 700; font-size: 14.5px; line-height: 1.25; }
-.ficha-mini .carrera { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--tinta-media); }
-.ficha-mini .carrera i { width: 9px; height: 9px; border-radius: 50%; background: var(--tono); flex: none; }
+.ficha-mini:hover { box-shadow: var(--sombra); transform: translateY(-1px); }
+.ficha-mini .retrato { position: relative; background: var(--capa-hundida); min-height: 118px; }
+.ficha-mini .retrato img { width: 100%; height: 100%; object-fit: cover; display: block; position: absolute; inset: 0; }
+.ficha-mini .retrato .sinfoto { position: absolute; inset: 0; display: grid; place-items: center; font: 700 30px var(--f-titulo); color: var(--tinta-tenue); }
+.ficha-mini .retrato .chip { position: absolute; left: 5px; top: 5px; font-size: 11px; padding: 2px 7px; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+.ficha-mini .retrato .horas { position: absolute; right: 5px; bottom: 5px; background: rgba(25,23,19,.78); color: #fff; font-size: 11.5px; font-weight: 700; padding: 2px 7px; border-radius: 10px; }
+.ficha-mini .cuerpo { padding: 9px 10px 9px 0; display: grid; gap: 3px; align-content: center; min-width: 0; }
+.ficha-mini .nombre { font-weight: 700; font-size: 14px; line-height: 1.2; }
+.ficha-mini .carrera { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--tinta-media); min-width: 0; }
+.ficha-mini .carrera span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ficha-mini .carrera i { width: 8px; height: 8px; border-radius: 50%; background: var(--tono); flex: none; }
 .ficha-mini .contacto { font-size: 12.5px; color: var(--tinta-tenue); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ficha-mini .dias { display: flex; gap: 4px; margin-top: 4px; }
-.ficha-mini .dias i { flex: 1; height: 18px; border-radius: 4px; background: var(--capa-hundida); font-size: 10.5px; font-style: normal; font-weight: 700; color: var(--tinta-tenue); display: grid; place-items: center; }
+.ficha-mini .dias { display: flex; gap: 3px; margin-top: 3px; max-width: 150px; }
+.ficha-mini .dias i { flex: 1; height: 16px; border-radius: 3px; background: var(--capa-hundida); font-size: 10px; font-style: normal; font-weight: 700; color: var(--tinta-tenue); display: grid; place-items: center; }
 .ficha-mini .dias i.si { background: var(--marca-solida); color: #fff; }
-.ficha-mini .cuando { font-size: 11.5px; color: var(--tinta-tenue); }
-@media (max-width: 480px) { .fichas { grid-template-columns: repeat(2, 1fr); gap: 8px; } .ficha-mini .cuerpo { padding: 8px 9px 10px; } }
+.ficha-mini .cuando { font-size: 11px; color: var(--tinta-tenue); }
+@media (max-width: 480px) { .fichas { grid-template-columns: 1fr; gap: 8px; } }
 
 /* lista de alumnos (versión anterior, por si se usa) */
 .lista { display: grid; gap: 10px; margin-top: 12px; }
