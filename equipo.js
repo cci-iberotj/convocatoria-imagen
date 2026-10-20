@@ -7,6 +7,7 @@
 
 const $  = s => document.querySelector(s);
 const $$ = s => Array.from(document.querySelectorAll(s));
+const semestreTexto = n => Number(n) === 0 ? CONFIG.egresado : n + '°';
 const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 let todos = [];            // lo que vino del almacén
@@ -149,7 +150,7 @@ function pintarLista() {
       ${r.foto ? `<img src="${r.foto}" alt="">` : `<div class="sinfoto">${esc((r.nombre || '?')[0])}</div>`}
       <div>
         <div class="nombre">${esc(r.nombre)} <span class="chip ${esc(r.estado || 'nueva')}">${esc(r.estado || 'nueva')}</span></div>
-        <div class="linea">${esc(r.carrera)} · ${r.semestre}°</div>
+        <div class="linea">${esc(r.carrera)} · ${semestreTexto(r.semestre)}</div>
         <div class="linea">${telefono(r.telefono)} · ${esc(r.correo)}</div>
       </div>
       <div class="horas"><b>${(r.disponibilidad || []).length}</b>horas</div>
@@ -166,7 +167,7 @@ function abrirFicha(folio) {
   $('#ficha-foto').src = r.foto || '';
   $('#ficha-nombre').textContent = r.nombre;
   $('#ficha-datos').innerHTML =
-    '<dt>Carrera · semestre</dt><dd>' + esc(r.carrera) + ' · ' + r.semestre + '°</dd>' +
+    '<dt>Carrera · semestre</dt><dd>' + esc(r.carrera) + ' · ' + semestreTexto(r.semestre) + '</dd>' +
     '<dt>Correo</dt><dd><a href="mailto:' + esc(r.correo) + '">' + esc(r.correo) + '</a></dd>' +
     '<dt>Teléfono · WhatsApp</dt><dd><a href="https://wa.me/52' + esc(r.telefono) + '" target="_blank" rel="noopener">' + telefono(r.telefono) + '</a></dd>' +
     '<dt>Registrado</dt><dd>' + fecha(r.creado) + '</dd>';
@@ -195,7 +196,7 @@ function abrirLupa() {
   const r = todos.find(x => x.folio === abierto);
   if (!r || !r.foto) return;
   $('#lupa-foto').src = r.foto;
-  $('#lupa-nombre').textContent = r.nombre + ' · ' + r.carrera + ' · ' + r.semestre + '°';
+  $('#lupa-nombre').textContent = r.nombre + ' · ' + r.carrera + ' · ' + semestreTexto(r.semestre);
   $('#lupa').classList.remove('oculto');
 }
 function cerrarLupa() { $('#lupa').classList.add('oculto'); }
@@ -246,7 +247,7 @@ $('#btn-csv').addEventListener('click', () => {
                'estado', 'nota', 'horas', 'registrado', ...bloques.map(b => b.t)];
   const filas = vistos.map(r => {
     const d = new Set(r.disponibilidad || []);
-    return [r.folio, r.nombre, r.carrera, r.semestre, r.correo, r.telefono,
+    return [r.folio, r.nombre, r.carrera, semestreTexto(r.semestre), r.correo, r.telefono,
             r.estado || 'nueva', r.nota, d.size, r.creado, ...bloques.map(b => d.has(b.k) ? 'x' : '')];
   });
   const celda = v => { const s = String(v == null ? '' : v); return /[",\n;]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };

@@ -80,7 +80,7 @@ create policy "registrarse" on public.casting
     and char_length(nombre)    between 5 and 120
     and char_length(matricula) <= 20
     and char_length(carrera)   between 1 and 80
-    and semestre between 1 and 12
+    and semestre between 0 and 12            -- 0 = egresado (desde el 20-oct-2026)
     and char_length(correo)    between 6 and 120
     and telefono ~ '^[0-9]{10}$'
     and char_length(instagram) <= 40

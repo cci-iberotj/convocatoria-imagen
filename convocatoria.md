@@ -18,7 +18,7 @@ Otras opciones de título:
 
 ## 1 · ¿A quién buscamos?
 
-A ti. Si estudias en la IBERO Tijuana, de cualquier carrera y de cualquier semestre, y te late salir en las fotos y los videos de la universidad (la página, las redes, las campañas), este es tu lugar.
+A ti. Si estudias o estudiaste en la IBERO Tijuana, de cualquier carrera y de cualquier semestre (también egresados), y te late salir en las fotos y los videos de la universidad (la página, las redes, las campañas), este es tu lugar.
 
 Queremos gente real de la comunidad, con ganas de representar a su carrera y de pasarla bien frente a la cámara.
 
@@ -31,7 +31,7 @@ Queremos gente real de la comunidad, con ganas de representar a su carrera y de 
 
 ## 3 · Lo único que necesitas
 
-- Estar **inscrito** en la IBERO Tijuana, con matrícula vigente.
+- Ser **estudiante o egresado** de la IBERO Tijuana.
 - Tener **18 años cumplidos** **[o, si eres menor de edad, traer la autorización firmada de tu madre, padre o tutor el día de la sesión]**.
 - Un rato libre esa semana: al menos **[dos horas]** entre el 26 y el 30 de octubre.
 - Llegar puntual a tu sesión, o avisar con un día de anticipación si no vas a poder.
@@ -99,11 +99,11 @@ Es lo que ve el alumno al abrir la liga, antes de los pasos, con tres fotos de l
 > # La IBERO se ve como tú
 > Buscamos alumnas y alumnos de todas las carreras para ser la imagen de la IBERO en fotos y video. ¿Te animas?
 >
-> **¿A quién buscamos?** A ti. Si estudias en la IBERO, de cualquier carrera y semestre, y te late salir en las fotos y videos de la universidad, este es tu lugar.
+> **¿A quién buscamos?** A ti. Si estudias o estudiaste en la IBERO, de cualquier carrera y semestre, y te late salir en las fotos y videos de la universidad, este es tu lugar.
 >
 > **¿Qué vas a hacer?** Una o dos sesiones de foto y video en el campus, de una a dos horas, entre el lunes 26 y el viernes 30 de octubre. Nosotros ponemos la producción; tú, la actitud. Te llevas [tus fotos editadas y una constancia de participación].
 >
-> **Lo único que necesitas.** Estar inscrito, tener 18 años cumplidos y un rato libre esa semana.
+> **Lo único que necesitas.** Ser estudiante o egresado, tener 18 años cumplidos y un rato libre esa semana.
 >
 > **Fechas.** Regístrate hasta el [jueves 22 de octubre]. El [viernes 23] te decimos si quedaste.
 >
@@ -119,7 +119,7 @@ Es lo que ve el alumno al abrir la liga, antes de los pasos, con tres fotos de l
 
 ## Los cuatro pasos del formulario
 
-1. **Cuéntanos de ti**: nombre completo, carrera (incluye «Posgrados»), semestre, correo institucional, teléfono o WhatsApp.
+1. **Cuéntanos de ti**: nombre completo, carrera (incluye «Posgrados»), semestre (o «Egresado/a»), correo, teléfono o WhatsApp.
 2. **Una foto para reconocerte**: se toma con la cámara del celular desde el mismo formulario; si la cámara no abre, se puede subir una foto. No se publica.
 3. **¿Cuándo puedes?**: rejilla de lunes 26 a viernes 30, por horas. Se marca tocando o arrastrando.
 4. **Todo listo**: resumen, dos casillas (uso de datos para la convocatoria y autorización de uso de imagen si participa) y envío.

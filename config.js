@@ -141,10 +141,17 @@ const CONFIG = {
     'Posgrados',
   ],
   semestres: 10,
+  /* Cómo se llama la opción de semestre para quien ya terminó; se guarda
+     como semestre 0. */
+  egresado: 'Egresado/a',
+  /* Cómo se llama la opción de semestre para quien ya terminó; se guarda
+     como semestre 0. */
+  egresado: 'Egresado/a',
 
-  /* Correo institucional: se pide que termine así. Si los alumnos
-     tienen otro dominio, se cambia aquí. Vacío = cualquier correo. */
-  dominioCorreo: 'ibero.mx',
+  /* Correo: si se pone un dominio (p. ej. 'ibero.mx') sólo se aceptan
+     correos que terminen así. Vacío = cualquier correo, porque la
+     convocatoria también es para egresados (Leo, 20-oct-2026). */
+  dominioCorreo: '',
 
   /* ── La foto del registro ───────────────────────────────
      Se guarda a este tamaño (lado largo) y calidad JPEG. A 640 px
@@ -155,5 +162,5 @@ const CONFIG = {
   /* Estados que el equipo le pone a cada registro. */
   estados: ['nueva', 'convocada', 'descartada'],
 
-  version: '1.7',
+  version: '1.8',
 };

@@ -7,6 +7,7 @@
 
 const $  = s => document.querySelector(s);
 const $$ = s => Array.from(document.querySelectorAll(s));
+const semestreTexto = n => Number(n) === 0 ? CONFIG.egresado : n + '°';
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 const registro = {
@@ -42,7 +43,7 @@ function pintarTextos() {
               CONFIG.area + ' · <a href="https://' + CONFIG.sitio + '" target="_blank" rel="noopener">' + CONFIG.sitio + '</a>';
   $('#pie-inicio').innerHTML = pie;
   $('#pie-listo').innerHTML = pie;
-  if (CONFIG.dominioCorreo) $('#ayuda-correo').textContent = 'El que termina en ' + CONFIG.dominioCorreo + '.';
+  $('#ayuda-correo').textContent = CONFIG.dominioCorreo ? 'El que termina en ' + CONFIG.dominioCorreo + '.' : 'Si eres estudiante, el institucional; si eres egresado, el que uses.';
 
   /* Fotos de la sesión: portada, galería y cabecera de «listo». */
   if (CONFIG.fotos.portada) {
@@ -73,6 +74,7 @@ function pintarTextos() {
 
   const sel = $('select[name=semestre]');
   for (let i = 1; i <= CONFIG.semestres; i++) sel.append(new Option(i + '°', i));
+  sel.append(new Option(CONFIG.egresado, 0));
   const car = $('select[name=carrera]');
   CONFIG.carreras.forEach(c => car.append(new Option(c, c)));
 
@@ -122,7 +124,7 @@ $('#paso-1').addEventListener('submit', ev => {
   const v = n => f.elements[n].value.trim();
   let ok = true;
   ok &= marcar(f.elements.nombre, v('nombre').split(/\s+/).length < 2 || v('nombre').length < 5);
-  ok &= marcar(f.elements.semestre, !v('semestre'));
+  ok &= marcar(f.elements.semestre, v('semestre') === '');
   ok &= marcar(f.elements.carrera, !v('carrera'));
   const correo = v('correo').toLowerCase();
   const correoOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo) &&
@@ -328,7 +330,7 @@ function pintarResumen() {
   $('#resumen-foto').src = registro.foto;
   $('#resumen-datos').innerHTML =
     '<dt>Nombre</dt><dd>' + esc(registro.nombre) + '</dd>' +
-    '<dt>Carrera · semestre</dt><dd>' + esc(registro.carrera) + ' · ' + registro.semestre + '°</dd>' +
+    '<dt>Carrera · semestre</dt><dd>' + esc(registro.carrera) + ' · ' + semestreTexto(registro.semestre) + '</dd>' +
     '<dt>Contacto</dt><dd>' + esc(registro.correo) + '<br>' + registro.telefono.replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3') + '</dd>';
   const porDia = {};
   registro.disponibilidad.forEach(k => { const [iso] = k.split('|'); porDia[iso] = (porDia[iso] || 0) + 1; });
@@ -386,7 +388,7 @@ async function avisar(r) {
       '<p style="margin:0 0 10px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#E0202B"><b>Convocatoria · nuevo registro</b></p>' +
       '<h2 style="margin:0 0 14px;font-size:22px">' + esc(r.nombre) + '</h2>' +
       '<table style="border-collapse:collapse">' +
-      fila('Carrera', r.carrera + ' · ' + r.semestre + '°') +
+      fila('Carrera', r.carrera + ' · ' + semestreTexto(r.semestre)) +
       fila('Correo', r.correo) +
       fila('Teléfono', r.telefono.replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3')) +
       fila('Disponibilidad', r.disponibilidad.length + ' horas: ' + dias) +

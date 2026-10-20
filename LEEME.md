@@ -111,6 +111,11 @@ en el `:root` del HTML:
   exporta a 3840 × 2160 en PNG y JPG como las de `2026/13_PANTALLAS`):
   foto a la izquierda, título «Sé parte de la imagen de IBERO Tijuana»,
   una línea con la fecha de cierre y el QR. Nada más, para leerse de paso.
+- `story.html`: Story de Instagram (1080 × 1920): la foto vertical de la
+  biblioteca (`story-foto.jpg`, DSC00133) a sangre, título, fecha y la
+  pastilla «Me apunto · Toca el enlace». Sin QR: el enlace va en el
+  sticker al subirla, por eso las franjas de arriba y abajo (≈250 px)
+  quedan libres. `python construir.py story`.
 
 `construir.py` genera el QR a la liga publicada y, por cada cartel, el
 PDF con Chrome (fuentes a curvas, sin márgenes) y un PNG para mirarlo;
