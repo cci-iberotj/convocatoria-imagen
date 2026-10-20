@@ -17,7 +17,7 @@ import webbrowser
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
 RAIZ = os.path.dirname(os.path.abspath(__file__))
-PUERTO = 8791
+PUERTO = int(os.environ.get('PORT') or (sys.argv[sys.argv.index('--puerto') + 1] if '--puerto' in sys.argv else 8791))
 
 
 class Manejador(SimpleHTTPRequestHandler):

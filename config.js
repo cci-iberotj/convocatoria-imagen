@@ -141,6 +141,13 @@ const CONFIG = {
     'Posgrados',
   ],
   semestres: 10,
+  /* Un color por carrera, en el mismo orden que la lista de arriba. Se
+     usa en la vista del equipo (panel de carreras y marca de cada ficha).
+     Son los tonos de LA PIZARRA: todos aguantan texto blanco encima. */
+  coloresCarreras: [
+    '#A62E48', '#7A4E18', '#34527A', '#5C3F85', '#106459', '#3F5A37',
+    '#96231F', '#2F4E7A', '#A32A6E', '#0A5AA8', '#4A5568', '#7B1E2E',
+  ],
   /* Cómo se llama la opción de semestre para quien ya terminó; se guarda
      como semestre 0. */
   egresado: 'Egresado/a',
@@ -162,5 +169,5 @@ const CONFIG = {
   /* Estados que el equipo le pone a cada registro. */
   estados: ['nueva', 'convocada', 'descartada'],
 
-  version: '1.8',
+  version: '1.9',
 };

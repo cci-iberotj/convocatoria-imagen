@@ -12,13 +12,15 @@ const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&am
 
 let todos = [];            // lo que vino del almacén
 let bloqueElegido = null;  // clave 'iso|HH' del mapa de calor, o null
+let filtroCarrera = '';    // carrera elegida en el panel de arriba, o ''
+const COLORES = CONFIG.coloresCarreras || [];
+const colorDe = carrera => COLORES[CONFIG.carreras.indexOf(carrera)] || '#655C54';
 let abierto = null;        // folio de la ficha abierta
 
 /* ── Entrada ────────────────────────────────────────────── */
 function pintarTextos() {
   $$('#rotulo-area, #rotulo-area-2').forEach(e => e.textContent = CONFIG.area);
   $('#titulo').textContent = CONFIG.titulo + ' · respuestas';
-  CONFIG.carreras.forEach(c => $('#f-carrera').append(new Option(c, c)));
   CONFIG.estados.forEach(e => { $('#f-estado').append(new Option(e, e)); $('#ficha-estado').append(new Option(e, e)); });
   if (Almacen.modo === 'local') {
     const a = $('#aviso-motor');
@@ -69,16 +71,18 @@ $('#btn-recargar').addEventListener('click', cargar);
 
 function filtrados() {
   const q = $('#f-texto').value.trim().toLowerCase();
-  const car = $('#f-carrera').value, est = $('#f-estado').value;
+  const car = filtroCarrera, est = $('#f-estado').value;
   return todos.filter(r =>
     (!q || [r.nombre, r.correo, r.telefono].some(v => String(v || '').toLowerCase().includes(q))) &&
     (!car || r.carrera === car) &&
     (!est || (r.estado || 'nueva') === est) &&
     (!bloqueElegido || (r.disponibilidad || []).includes(bloqueElegido)));
 }
-['#f-texto', '#f-carrera', '#f-estado'].forEach(s => $(s).addEventListener('input', pintarTodo));
+['#f-texto', '#f-estado', '#f-orden'].forEach(s => $(s).addEventListener('input', pintarTodo));
 
 function pintarTodo() {
+  pintarCifras();
+  pintarCarreras();
   pintarCalor();
   pintarLista();
   const activos = todos.filter(r => r.estado !== 'descartada').length;
@@ -86,9 +90,40 @@ function pintarTodo() {
     todos.filter(r => r.estado === 'convocada').length + ' convocados';
 }
 
+/* ── Cifras y carreras ──────────────────────────────────── */
+function pintarCifras() {
+  const n = todos.length;
+  const activos = todos.filter(r => r.estado !== 'descartada').length;
+  const conv = todos.filter(r => r.estado === 'convocada').length;
+  const egr = todos.filter(r => Number(r.semestre) === 0).length;
+  const carrerasCon = new Set(todos.map(r => r.carrera)).size;
+  $('#cifras').innerHTML =
+    `<div><b>${n}</b><span>registro${n === 1 ? '' : 's'}</span></div>` +
+    `<div><b>${activos}</b><span>en juego</span></div>` +
+    `<div><b>${conv}</b><span>convocado${conv === 1 ? '' : 's'}</span></div>` +
+    `<div><b>${egr}</b><span>egresado${egr === 1 ? '' : 's'}</span></div>` +
+    `<div><b>${carrerasCon}</b><span>de ${CONFIG.carreras.length} carreras</span></div>`;
+}
+
+/* Un chip por carrera con su color y cuántos van (sin descartados);
+   tocarlo filtra las fichas y el mapa de calor. */
+function pintarCarreras() {
+  const caja = $('#carreras');
+  const cuenta = {};
+  todos.filter(r => r.estado !== 'descartada').forEach(r => { cuenta[r.carrera] = (cuenta[r.carrera] || 0) + 1; });
+  caja.innerHTML = CONFIG.carreras.map(c => {
+    const n = cuenta[c] || 0;
+    return `<button type="button" class="carrera-chip${n ? '' : ' vacio'}${filtroCarrera === c ? ' activo' : ''}" data-carrera="${esc(c)}" style="--tono:${colorDe(c)}"><i></i>${esc(c)} <b>${n}</b></button>`;
+  }).join('');
+  $$('#carreras .carrera-chip').forEach(b => b.addEventListener('click', () => {
+    filtroCarrera = filtroCarrera === b.dataset.carrera ? '' : b.dataset.carrera;
+    pintarTodo();
+  }));
+}
+
 /* ── Mapa de calor ──────────────────────────────────────── */
 function conteos() {
-  const base = todos.filter(r => r.estado !== 'descartada');
+  const base = todos.filter(r => r.estado !== 'descartada' && (!filtroCarrera || r.carrera === filtroCarrera));
   const c = {};
   base.forEach(r => (r.disponibilidad || []).forEach(k => { c[k] = (c[k] || 0) + 1; }));
   return c;
@@ -145,17 +180,37 @@ function pintarLista() {
     lista.innerHTML = '<div class="vacio">' + (todos.length ? 'Nada coincide con el filtro.' : 'Todavía no hay registros.') + '</div>';
     return;
   }
-  lista.innerHTML = vistos.map(r => `
-    <button class="alumno" data-folio="${esc(r.folio)}">
-      ${r.foto ? `<img src="${r.foto}" alt="">` : `<div class="sinfoto">${esc((r.nombre || '?')[0])}</div>`}
-      <div>
-        <div class="nombre">${esc(r.nombre)} <span class="chip ${esc(r.estado || 'nueva')}">${esc(r.estado || 'nueva')}</span></div>
-        <div class="linea">${esc(r.carrera)} · ${semestreTexto(r.semestre)}</div>
-        <div class="linea">${telefono(r.telefono)} · ${esc(r.correo)}</div>
+  const orden = $('#f-orden').value;
+  const ordenados = vistos.slice().sort((a, b) => {
+    if (orden === 'horas') return (b.disponibilidad || []).length - (a.disponibilidad || []).length;
+    if (orden === 'nombre') return a.nombre.localeCompare(b.nombre, 'es');
+    if (orden === 'carrera') return a.carrera.localeCompare(b.carrera, 'es') || a.nombre.localeCompare(b.nombre, 'es');
+    return (b.creado || '').localeCompare(a.creado || '');
+  });
+  $('#titulo-fichas').textContent = 'Fichas · ' + ordenados.length;
+  lista.innerHTML = ordenados.map(r => {
+    const disp = new Set(r.disponibilidad || []);
+    const dias = Semana.dias.map(d => {
+      const n = Semana.horas.filter(h => disp.has(Semana.clave(d.iso, h))).length;
+      return `<i class="${n ? 'si' : ''}" title="${d.dia} ${d.num}: ${n} h">${d.corto[0].toUpperCase()}</i>`;
+    }).join('');
+    return `
+    <button class="ficha-mini" data-folio="${esc(r.folio)}" style="--tono:${colorDe(r.carrera)}">
+      <div class="retrato">
+        ${r.foto ? `<img src="${r.foto}" alt="" loading="lazy">` : `<div class="sinfoto">${esc((r.nombre || '?')[0])}</div>`}
+        <span class="chip ${esc(r.estado || 'nueva')}">${esc(r.estado || 'nueva')}</span>
+        <span class="horas">${disp.size} h</span>
       </div>
-      <div class="horas"><b>${(r.disponibilidad || []).length}</b>horas</div>
-    </button>`).join('');
-  $$('#lista .alumno').forEach(b => b.addEventListener('click', () => abrirFicha(b.dataset.folio)));
+      <div class="cuerpo">
+        <div class="nombre">${esc(r.nombre)}</div>
+        <div class="carrera"><i></i>${esc(r.carrera)} · ${semestreTexto(r.semestre)}</div>
+        <div class="contacto">${telefono(r.telefono)}</div>
+        <div class="dias">${dias}</div>
+        <div class="cuando">${fecha(r.creado)}</div>
+      </div>
+    </button>`;
+  }).join('');
+  $$('#lista .ficha-mini').forEach(b => b.addEventListener('click', () => abrirFicha(b.dataset.folio)));
 }
 const telefono = t => String(t || '').replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3');
 
