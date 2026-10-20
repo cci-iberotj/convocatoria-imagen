@@ -9,7 +9,7 @@ Tres piezas en una carpeta:
 | `index.html` | La página que ven los alumnos (celular primero): landing con portada a pantalla completa, cinta, galería, pasos, aviso de ropa; y luego el registro: nombre, carrera (con «Posgrados»), semestre, correo, teléfono; foto con la cámara, rejilla de disponibilidad y consentimiento. Sin matrícula ni Instagram (Leo, 19-oct); un registro por correo. Los estilos de la landing están en `inicio.css`; los del registro y la vista del equipo en `estilos.css`. |
 | `equipo.html` | La vista del equipo: lista con foto, contacto, mapa de calor de disponibilidad, ficha con estado y nota, borrado y exportación a CSV. |
 
-**Publicado:** https://cci-iberotj.github.io/convocatoria-imagen/ (equipo: `/equipo.html`). Las respuestas se guardan en la base de LA PIZARRA (tabla `casting`, creada el 19-oct-2026).
+**Publicado:** https://cci-iberotj.github.io/convocatoria-imagen/. Los registros se ven en **LA PIZARRA → pestaña Convocatoria** (globo con los nuevos; la vista del equipo va incrustada con la misma sesión) o sueltos en `/equipo.html` con cuenta de LA PIZARRA. Las respuestas se guardan en la base de LA PIZARRA (tabla `casting`, creada el 19-oct-2026).
 
 ---
 
@@ -107,14 +107,33 @@ en el `:root` del HTML:
   a Canva, quitar el fondo, guardar la vista previa y agregar el par en
   `PARES`.
 
-`construir.py` genera el QR a la liga publicada y, por cada versión, el
-PDF con Chrome (fuentes a curvas, sin márgenes) y un PNG para mirarlo.
-`python construir.py cartel-tabloide-minimo` hace sólo una. La carpeta no se sube al repositorio
+- `pantalla.html`: la pieza para las pantallas del campus (16:9, se
+  exporta a 3840 × 2160 en PNG y JPG como las de `2026/13_PANTALLAS`):
+  foto a la izquierda, título «Sé parte de la imagen de IBERO Tijuana»,
+  una línea con la fecha de cierre y el QR. Nada más, para leerse de paso.
+
+`construir.py` genera el QR a la liga publicada y, por cada cartel, el
+PDF con Chrome (fuentes a curvas, sin márgenes) y un PNG para mirarlo;
+para la pantalla, la captura a 4K. `python construir.py pantalla` hace
+sólo esa. Si un PDF está abierto en un visor, el nuevo queda como
+«(nuevo).pdf». La carpeta no se sube al repositorio
 (está en `.gitignore`): es material de impresión, no de la página.
 
 ```
 python difusion/construir.py
 ```
+
+## Avisos
+
+- **En LA PIZARRA:** la pestaña Convocatoria trae un globo con los registros
+  nuevos desde la última vez que se abrió; se refresca cada 20 s mientras LA
+  PIZARRA está abierta.
+- **Por correo (EmailJS):** `config.js → avisos` manda un correo por registro a
+  Leo y Marysol con el mismo servicio de la plataforma de solicitudes. El
+  19-oct-2026 la API aceptaba la petición pero el envío no terminaba (el
+  servicio de correo conectado en la cuenta de EmailJS responde con error);
+  se arregla reconectándolo en dashboard.emailjs.com → Email Services. El
+  formulario no espera la respuesta, así que al alumno no lo detiene.
 
 ## Publicar
 

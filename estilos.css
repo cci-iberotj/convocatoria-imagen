@@ -298,7 +298,18 @@ footer.pie a { color: inherit; }
   border: 0; background: var(--capa-1); font-size: 20px; cursor: pointer; color: var(--tinta-media);
 }
 .ficha-cabeza { display: grid; grid-template-columns: 120px 1fr; gap: 16px; align-items: start; }
-.ficha-cabeza img { width: 120px; height: 160px; object-fit: cover; border-radius: 10px; background: var(--capa-hundida); }
+.ficha-cabeza img { width: 120px; height: 160px; object-fit: cover; border-radius: 10px; background: var(--capa-hundida); display: block; }
+.foto-boton { padding: 0; border: 0; background: none; cursor: zoom-in; border-radius: 10px; }
+.foto-boton:hover img { box-shadow: 0 0 0 3px var(--accion); }
+
+/* la foto en grande */
+.lupa {
+  position: fixed; inset: 0; z-index: 60; background: rgba(25,23,19,.92); display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 14px; padding: 20px; cursor: zoom-out;
+}
+.lupa img { max-width: min(92vw, 900px); max-height: 80vh; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+.lupa-pie { display: flex; align-items: center; gap: 16px; color: #fff; font-size: 15px; }
+.lupa-pie .btn { cursor: pointer; }
 .ficha-cabeza dl { margin: 0; font-size: 14.5px; }
 .ficha-cabeza dt { color: var(--tinta-tenue); font-size: 12px; margin-top: 6px; }
 .ficha-cabeza dd { margin: 0; }
@@ -328,6 +339,7 @@ body.incrustado .entrada { margin-top: 20px; }
   .tarjeta { padding: 18px 14px; border-radius: 12px; }
   .ficha-cabeza { grid-template-columns: 90px 1fr; }
   .ficha-cabeza img { width: 90px; height: 120px; }
+  .lupa img { max-height: 72vh; }
   .alumno { grid-template-columns: 48px 1fr auto; }
   .alumno img, .alumno .sinfoto { width: 48px; height: 62px; }
 }

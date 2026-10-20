@@ -188,9 +188,27 @@ function abrirFicha(folio) {
   document.body.style.overflow = 'hidden';
 }
 function cerrarFicha() { abierto = null; $('#velo').classList.add('oculto'); document.body.style.overflow = ''; }
+
+/* La foto en grande: clic sobre la foto de la ficha; se cierra con
+   clic en cualquier parte, con el botón o con Esc. */
+function abrirLupa() {
+  const r = todos.find(x => x.folio === abierto);
+  if (!r || !r.foto) return;
+  $('#lupa-foto').src = r.foto;
+  $('#lupa-nombre').textContent = r.nombre + ' · ' + r.carrera + ' · ' + r.semestre + '°';
+  $('#lupa').classList.remove('oculto');
+}
+function cerrarLupa() { $('#lupa').classList.add('oculto'); }
+$('#ficha-foto-boton').addEventListener('click', abrirLupa);
+$('#lupa').addEventListener('click', cerrarLupa);
+$('#lupa-cerrar').addEventListener('click', cerrarLupa);
 $('#ficha-cerrar').addEventListener('click', cerrarFicha);
 $('#velo').addEventListener('click', ev => { if (ev.target === $('#velo')) cerrarFicha(); });
-document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && abierto) cerrarFicha(); });
+document.addEventListener('keydown', ev => {
+  if (ev.key !== 'Escape') return;
+  if (!$('#lupa').classList.contains('oculto')) cerrarLupa();
+  else if (abierto) cerrarFicha();
+});
 
 $('#ficha-guardar').addEventListener('click', async () => {
   if (!abierto) return;
