@@ -6,8 +6,8 @@
 <title>Convocatoria · Respuestas</title>
 <meta name="robots" content="noindex">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23191713'/%3E%3Crect x='7' y='7' width='8' height='8' rx='2' fill='%237B1E2E'/%3E%3Crect x='17' y='7' width='8' height='8' rx='2' fill='%23F6E9EB'/%3E%3Crect x='7' y='17' width='8' height='8' rx='2' fill='%23F6E9EB'/%3E%3Crect x='17' y='17' width='8' height='8' rx='2' fill='%237B1E2E'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="tipografia.css?v=1.11">
-<link rel="stylesheet" href="estilos.css?v=1.11">
+<link rel="stylesheet" href="tipografia.css?v=1.12">
+<link rel="stylesheet" href="estilos.css?v=1.12">
 </head>
 <body>
 <main class="hoja ancha">
@@ -61,6 +61,15 @@
       </div>
     </section>
 
+    <!-- Sesiones -->
+    <section class="tarjeta">
+      <div class="cabeza-seccion">
+        <div><h2>Sesiones</h2>
+        <p class="meta">A quién se convoca a cada sesión. Agregar o quitar aquí cambia el estado del alumno; la nota no se toca.</p></div>
+      </div>
+      <div class="sesiones" id="sesiones"></div>
+    </section>
+
     <div class="tablero-dos">
     <!-- Mapa de calor -->
     <section class="tarjeta columna-calor">
@@ -107,6 +116,9 @@
     <div class="fila" style="margin-top:6px">
       <label class="campo"><span>Estado</span><select id="ficha-estado"></select></label>
       <label class="campo"><span>Género</span><select id="ficha-genero"></select></label>
+    </div>
+    <div class="fila">
+      <label class="campo"><span>Sesión</span><select id="ficha-sesion"></select></label>
       <label class="campo"><span>Folio</span><input id="ficha-folio" type="text" readonly></label>
     </div>
     <label class="campo"><span>Nota del equipo</span><textarea id="ficha-nota" placeholder="Sesión asignada, observaciones…"></textarea></label>
@@ -123,8 +135,8 @@
   <img id="lupa-foto" alt="">
   <div class="lupa-pie"><span id="lupa-nombre"></span><button type="button" class="btn secundario chico" id="lupa-cerrar">Cerrar</button></div>
 </div>
-<script src="config.js?v=1.11"></script>
-<script src="almacen.js?v=1.11"></script>
-<script src="equipo.js?v=1.11"></script>
+<script src="config.js?v=1.12"></script>
+<script src="almacen.js?v=1.12"></script>
+<script src="equipo.js?v=1.12"></script>
 </body>
 </html>

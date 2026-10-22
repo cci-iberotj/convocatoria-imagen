@@ -174,8 +174,20 @@ const CONFIG = {
     { id: 'otro',   nombre: 'Prefiero no decirlo' },
   ],
 
+  /* ── Las sesiones ───────────────────────────────────────
+     El plan de la semana (plan-sesiones.md). Cada una tiene un id
+     corto (se guarda en el registro del alumno), día, hora, nombre,
+     y las carreras que le tocan (sólo para sugerir a quién agregar;
+     se puede meter a cualquiera). Si cambia el plan, se cambia aquí. */
+  sesiones: [
+    { id: 'lun-salud',    dia: '2026-10-26', hora: '12:00–14:00', nombre: 'Salud',                      carreras: ['Medicina', 'Enfermería', 'Nutrición', 'Psicología'] },
+    { id: 'mar-sociales', dia: '2026-10-27', hora: '14:00–17:00', nombre: 'Sociales y Negocios',        carreras: ['Comunicación', 'Derecho', 'Administración de Negocios Internacionales', 'Administración de Empresas'] },
+    { id: 'vie-ing',      dia: '2026-10-30', hora: '12:00–15:00', nombre: 'Ingenierías y Arquitectura', carreras: ['Arquitectura', 'Ingeniería en Mecatrónica', 'Ingeniería Industrial en Manufactura Inteligente'] },
+    { id: 'vie-salud',    dia: '2026-10-30', hora: '15:00–17:00', nombre: 'Salud · segunda cita',       carreras: ['Medicina', 'Enfermería', 'Nutrición', 'Psicología'] },
+  ],
+
   /* Estados que el equipo le pone a cada registro. */
   estados: ['nueva', 'convocada', 'descartada'],
 
-  version: '1.11',
+  version: '1.12',
 };

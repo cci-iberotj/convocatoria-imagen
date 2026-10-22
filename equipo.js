@@ -25,6 +25,8 @@ function pintarTextos() {
   $$('#rotulo-area, #rotulo-area-2').forEach(e => e.textContent = CONFIG.area);
   $('#titulo').textContent = CONFIG.titulo + ' · respuestas';
   CONFIG.estados.forEach(e => { $('#f-estado').append(new Option(e, e)); $('#ficha-estado').append(new Option(e, e)); });
+  $('#ficha-sesion').append(new Option('Sin sesión', ''));
+  (CONFIG.sesiones || []).forEach(s => $('#ficha-sesion').append(new Option(sesionTitulo(s), s.id)));
   $('#ficha-genero').append(new Option('Sin dato', ''));
   (CONFIG.generos || []).forEach(g => $('#ficha-genero').append(new Option(g.nombre, g.id)));
   if (Almacen.modo === 'local') {
@@ -86,7 +88,69 @@ function filtrados() {
 }
 ['#f-texto', '#f-estado', '#f-orden'].forEach(s => $(s).addEventListener('input', pintarTodo));
 
+/* ── Sesiones ───────────────────────────────────────────── */
+function sesionTitulo(s) {
+  const d = Semana.dias.find(x => x.iso === s.dia);
+  return (d ? d.dia + ' ' + d.num : s.dia) + ' · ' + s.hora + ' · ' + s.nombre;
+}
+/* Horas de la sesión (desde la cadena '12:00–14:00') que el alumno marcó. */
+function horasEn(r, s) {
+  const [a, b] = s.hora.split('–').map(x => parseInt(x, 10));
+  const disp = new Set(r.disponibilidad || []);
+  const puede = [];
+  for (let h = a; h < b; h++) if (disp.has(Semana.clave(s.dia, h))) puede.push(h);
+  return { total: b - a, puede };
+}
+function pintarSesiones() {
+  const caja = $('#sesiones');
+  if (!caja) return;
+  caja.innerHTML = (CONFIG.sesiones || []).map(s => {
+    const d = Semana.dias.find(x => x.iso === s.dia);
+    const gente = todos.filter(r => r.sesion === s.id).sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+    const candidatos = todos.filter(r => r.sesion !== s.id && r.estado !== 'descartada')
+      .sort((a, b) => (s.carreras.includes(b.carrera) - s.carreras.includes(a.carrera)) || (horasEn(b, s).puede.length - horasEn(a, s).puede.length) || a.nombre.localeCompare(b.nombre, 'es'));
+    const filas = gente.map(r => {
+      const h = horasEn(r, s);
+      const texto = h.puede.length === h.total ? '<i>todas las horas</i>'
+        : h.puede.length ? '<i class="ojo">sólo ' + h.puede.map(x => x + ':00').join(', ') + '</i>'
+        : '<i class="ojo">no marcó estas horas</i>';
+      return `<div class="persona" data-folio="${esc(r.folio)}" title="Abrir ficha">
+        ${r.foto ? `<img src="${r.foto}" alt="">` : `<div class="sinfoto">${esc((r.nombre || '?')[0])}</div>`}
+        <div class="quien"><b>${esc(r.nombre)}</b><small>${esc(r.carrera)} · ${texto}</small></div>
+        <button type="button" class="quitar" data-quitar="${esc(r.folio)}" title="Quitar de esta sesión">×</button>
+      </div>`;
+    }).join('');
+    const opciones = candidatos.map(r => {
+      const h = horasEn(r, s);
+      const marca = h.puede.length === h.total ? '✓' : h.puede.length ? '~' : '·';
+      return `<option value="${esc(r.folio)}">${marca} ${esc(r.nombre)} · ${esc(r.carrera)}${r.sesion ? ' (ya en otra sesión)' : ''}</option>`;
+    }).join('');
+    return `<div class="sesion" data-sesion="${esc(s.id)}">
+      <div class="cuando"><b>${d ? d.dia + ' ' + d.num : esc(s.dia)}</b><span>${esc(s.hora)}</span><span>${esc(s.nombre)}</span><span>· ${gente.length}</span></div>
+      <div class="quienes">${filas || '<div class="vacia">Nadie todavía.</div>'}</div>
+      <div class="agregar"><select data-agregar="${esc(s.id)}"><option value="">Agregar a alguien… (✓ puede todas las horas, ~ algunas)</option>${opciones}</select></div>
+    </div>`;
+  }).join('');
+  $$('#sesiones .persona').forEach(p => p.addEventListener('click', ev => { if (!ev.target.closest('.quitar')) abrirFicha(p.dataset.folio); }));
+  $$('#sesiones [data-quitar]').forEach(b => b.addEventListener('click', ev => { ev.stopPropagation(); asignar(b.dataset.quitar, ''); }));
+  $$('#sesiones [data-agregar]').forEach(sel => sel.addEventListener('change', () => { if (sel.value) asignar(sel.value, sel.dataset.agregar); }));
+}
+/* Poner (o quitar) a un alumno en una sesión. Con sesión queda
+   convocado; sin sesión vuelve a «nueva» salvo que esté descartado. */
+async function asignar(folio, sesion) {
+  const r = todos.find(x => x.folio === folio);
+  if (!r) return;
+  const cambios = { sesion, estado: sesion ? 'convocada' : (r.estado === 'descartada' ? 'descartada' : 'nueva'),
+                    atendido_por: (Almacen.usuario() || {}).nombre || '' };
+  try {
+    await Almacen.actualizar(folio, cambios);
+    Object.assign(r, cambios);
+    pintarTodo();
+  } catch (e) { alert('No se guardó: ' + e.message); }
+}
+
 function pintarTodo() {
+  pintarSesiones();
   pintarCifras();
   pintarCarreras();
   pintarGenero();
@@ -289,6 +353,7 @@ function abrirFicha(folio) {
   mini.innerHTML = h;
   $('#ficha-estado').value = r.estado || 'nueva';
   $('#ficha-genero').value = r.genero || '';
+  $('#ficha-sesion').value = r.sesion || '';
   $('#ficha-folio').value = r.folio;
   $('#ficha-nota').value = r.nota || '';
   $('#ficha-aviso').classList.add('oculto');
@@ -320,7 +385,7 @@ document.addEventListener('keydown', ev => {
 
 $('#ficha-guardar').addEventListener('click', async () => {
   if (!abierto) return;
-  const cambios = { estado: $('#ficha-estado').value, nota: $('#ficha-nota').value.trim(), genero: $('#ficha-genero').value,
+  const cambios = { estado: $('#ficha-estado').value, nota: $('#ficha-nota').value.trim(), genero: $('#ficha-genero').value, sesion: $('#ficha-sesion').value,
                     atendido_por: (Almacen.usuario() || {}).nombre || '' };
   try {
     await Almacen.actualizar(abierto, cambios);
@@ -351,11 +416,11 @@ $('#btn-csv').addEventListener('click', () => {
   const bloques = [];
   Semana.dias.forEach(d => Semana.horas.forEach(h => bloques.push({ k: Semana.clave(d.iso, h), t: d.corto + ' ' + d.num + ' ' + Semana.hh(h) })));
   const cab = ['folio', 'nombre', 'carrera', 'semestre', 'genero', 'correo', 'telefono',
-               'estado', 'nota', 'horas', 'registrado', ...bloques.map(b => b.t)];
+               'estado', 'sesion', 'nota', 'horas', 'registrado', ...bloques.map(b => b.t)];
   const filas = vistos.map(r => {
     const d = new Set(r.disponibilidad || []);
     return [r.folio, r.nombre, r.carrera, semestreTexto(r.semestre), GENEROS[r.genero] || '', r.correo, r.telefono,
-            r.estado || 'nueva', r.nota, d.size, r.creado, ...bloques.map(b => d.has(b.k) ? 'x' : '')];
+            r.estado || 'nueva', (CONFIG.sesiones.find(s => s.id === r.sesion) || {}).nombre || '', r.nota, d.size, r.creado, ...bloques.map(b => d.has(b.k) ? 'x' : '')];
   });
   const celda = v => { const s = String(v == null ? '' : v); return /[",\n;]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
   const csv = '﻿' + [cab, ...filas].map(f => f.map(celda).join(',')).join('\r\n');
