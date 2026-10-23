@@ -1,42 +1,28 @@
 # Plan de sesiones · semana del 26 al 30 de octubre de 2026
-Calculado el 22 de octubre con los 43 registros en juego (sin descartados). Cada sesión se pensó para un mismo espacio por área; «completas» = pueden las dos horas, «parciales» = sólo una.
+Versión del 22 de octubre, acordada con Leo: tres sesiones, tres días distintos, una por área, grupos de seis a ocho personas (ni multitud ni dos personas), con reservas identificadas. Calculado con los 43 registros en juego.
 
-## Propuesta recomendada (por departamento)
-
-| Día | Hora | Grupo | Alcance |
+| Día | Hora | Área | Convocados |
 |---|---|---|---|
-| **Lunes 26** | **12:00–14:00** | Salud: Medicina, Enfermería, Nutrición, Psicología (29) | 14 completas + 4 parciales |
-| **Martes 27** | **14:00–17:00** (escalonado) | Sociales y Negocios: Comunicación, Derecho, Negocios Internacionales (7) | 6 de 7 |
-| **Viernes 30** | **12:00–15:00** (escalonado) | Ingenierías y Arquitectura (7) | 6 de 7 |
+| **Lunes 26** | **14:00–16:00** | Ingenierías y Arquitectura | 6 |
+| **Martes 27** | **14:00–17:00** (escalonado) | Comunicación y Derecho, reforzado con Negocios Internacionales | 6 |
+| **Miércoles 28** | **12:00–14:00** | Medicina y Enfermería | 8 (+2 de reserva) |
 
-### Lunes 26 · 12:00–14:00 · Salud
-Completas (14): Lebrack A., Paulette S., Hania A., Itzel A., Khalil V., Laura N., Mia E., Paula M., Pizarro C., Ocampo B., Rafael K., Sergio E., Karyme P., Meléndez L.
-Parciales (4, una de las dos horas): ver mapa de calor del lunes 12 y 13 h.
+## Lunes 26 · 14:00–16:00 · Ingenierías y Arquitectura
+Las dos horas: Abraham Isay Rabago, Oscar Antuan Villalpando, Paulette Isabel Samaniego (Industrial).
+Sólo 14:00–15:00: Sebastián Jasso. Sólo 15:00–16:00: Bryan Núñez, Federico Villa.
+Reserva: Zoe Moncada (Arquitectura) sólo puede el viernes 30 de 9 a 13.
 
-No caben ese día (15). Segunda cita sugerida para ellos: **viernes 30, 15:00–17:00** (Gómez M., Leah V., Paulet O., Luciana M., Melissa L., Eugenio R., Frannia S., Ivana A., Anakaren M.). Aurora M. sólo puede por la mañana (mar–vie 8–14); Paola J. y Vivian R. sólo mañanas (mar/jue/vie).
+## Martes 27 · 14:00–17:00 · Comunicación y Derecho
+De Comunicación y Derecho sólo hay tres registros y ninguno coincide con otro; con dos personas la sesión queda frágil, así que se refuerza con Negocios Internacionales, que es del mismo departamento y vive en los mismos espacios.
+- 14:00–16:00: Carolina Saldaña (Com), Rishell Flores (ANI), María Fernanda Ruiz (ANI, hasta las 15)
+- 15:00–17:00: Leonardo Ballesteros (ANI)
+- 16:00–17:00: Melissa Gómez (Der), Ruby López (ANI)
+Reserva: Christian Morán (Com) sólo puede el viernes 30 de 8 a 16.
 
-### Martes 27 · 14:00–17:00 · Sociales y Negocios
-- 14:00–16:00: Carolina E. (Com), Rishell M. (ANI), María Fernanda R. (ANI, hasta las 15)
-- 15:00–17:00: Leonardo X. (ANI)
-- 16:00–17:00: Melissa G. (Der), Ruby C. (ANI)
-Christian G. (Com) sólo puede el viernes 30 (8–16): se le puede sumar a la sesión de Ingenierías de ese día.
-El jueves 29 funciona igual que el martes si conviene mover.
-
-### Viernes 30 · 12:00–15:00 · Ingenierías y Arquitectura
-- 12:00–13:00: Zoe M. (Arq, sólo viernes 9–13), Abraham I., Oscar A., Paulette I.
-- 13:00–14:00: Abraham I., Oscar A., Paulette I.
-- 14:00–15:00: Bryan N., Federico V. (sólo tienen esa hora toda la semana), Abraham I., Oscar A., Paulette I.
-Sebastián J. no puede el viernes: lunes 26 11–15 o miércoles 28 9–13.
-
-## Alternativa estricta (sólo las carreras que nombraste)
-
-| Día | Hora | Grupo | Alcance |
-|---|---|---|---|
-| Lunes 26 | 14:00–16:00 | Arquitectura + Ingenierías (7) | 6 de 7 (Zoe sólo viernes) |
-| Miércoles 28 | 12:00–14:00 | Medicina + Enfermería (16) | 10 de 16 |
-| Martes 27 | 14:00–17:00 | Comunicación + Derecho (3) | 2 de 3 (Christian sólo viernes) |
-
-Con esta versión se quedan sin citar 13 personas de Nutrición, Psicología y Negocios Internacionales, que ya se registraron.
+## Miércoles 28 · 12:00–14:00 · Medicina y Enfermería
+Las dos horas (8): Aurora Chávez, Lebrack Arellano y Paulette Samaniego (Enfermería); Hania, Itzel Figueroa, Khalil, Laura Urías y Mia Magallón (Medicina).
+Reserva, también disponibles las dos horas: Paula González y Pizarro C. (Medicina).
+Para balancear hombres: Eugenio Rangel (Medicina) puede desde las 13:00 ese día.
 
 ## Cómo se calculó
-Para cada grupo se probaron todas las ventanas de dos horas de lunes a viernes (8–18 h) y se eligió la combinación de tres días distintos con mayor cobertura; donde dos horas seguidas no alcanzaban, se escalonó en un bloque más largo. El detalle hora por hora está en la pestaña Convocatoria de LA PIZARRA (mapa de calor, filtrable por carrera).
+Para cada área se probaron todas las ventanas de dos horas de lunes a viernes (8–18 h) y se eligió la combinación de tres días distintos con mejor cobertura; donde dos horas seguidas no alcanzaban (Ingenierías y Comunicación), se escalonó en un bloque más largo. La asignación vive en el apartado «Sesiones» de la pestaña Convocatoria de LA PIZARRA, donde se agrega o quita gente.
