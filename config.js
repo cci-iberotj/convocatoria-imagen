@@ -181,12 +181,12 @@ const CONFIG = {
      se puede meter a cualquiera). Si cambia el plan, se cambia aquí. */
   sesiones: [
     { id: 'lun-ing', dia: '2026-10-26', hora: '14:00–16:00', nombre: 'Ingenierías y Arquitectura', carreras: ['Arquitectura', 'Ingeniería en Mecatrónica', 'Ingeniería Industrial en Manufactura Inteligente'] },
-    { id: 'mar-com', dia: '2026-10-27', hora: '14:00–17:00', nombre: 'Comunicación y Derecho',     carreras: ['Comunicación', 'Derecho', 'Administración de Negocios Internacionales', 'Administración de Empresas'] },
+    { id: 'mar-com', dia: '2026-10-27', hora: '14:00–17:00', nombre: 'Comunicación y Derecho',     carreras: ['Comunicación', 'Derecho'] },
     { id: 'mie-med', dia: '2026-10-28', hora: '12:00–14:00', nombre: 'Medicina y Enfermería',      carreras: ['Medicina', 'Enfermería'] },
   ],
 
   /* Estados que el equipo le pone a cada registro. */
   estados: ['nueva', 'convocada', 'descartada'],
 
-  version: '1.13',
+  version: '1.14',
 };
