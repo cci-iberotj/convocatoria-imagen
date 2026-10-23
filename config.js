@@ -180,13 +180,56 @@ const CONFIG = {
      y las carreras que le tocan (sólo para sugerir a quién agregar;
      se puede meter a cualquiera). Si cambia el plan, se cambia aquí. */
   sesiones: [
-    { id: 'lun-ing', dia: '2026-10-26', hora: '14:00–16:00', nombre: 'Ingenierías y Arquitectura', carreras: ['Arquitectura', 'Ingeniería en Mecatrónica', 'Ingeniería Industrial en Manufactura Inteligente'] },
-    { id: 'mar-com', dia: '2026-10-27', hora: '14:00–17:00', nombre: 'Comunicación y Derecho',     carreras: ['Comunicación', 'Derecho'] },
-    { id: 'mie-med', dia: '2026-10-28', hora: '12:00–14:00', nombre: 'Medicina y Enfermería',      carreras: ['Medicina', 'Enfermería'] },
+    { id: 'lun-ing', dia: '2026-10-26', hora: '14:00–16:00', lugar: '', nombre: 'Ingenierías y Arquitectura', carreras: ['Arquitectura', 'Ingeniería en Mecatrónica', 'Ingeniería Industrial en Manufactura Inteligente'] },
+    { id: 'mar-com', dia: '2026-10-27', hora: '14:00–17:00', lugar: '', nombre: 'Comunicación y Derecho',     carreras: ['Comunicación', 'Derecho'] },
+    { id: 'mie-med', dia: '2026-10-28', hora: '12:00–14:00', lugar: '', nombre: 'Medicina y Enfermería',      carreras: ['Medicina', 'Enfermería'] },
   ],
+
+  /* ── Mensajes por WhatsApp ──────────────────────────────
+     Los redactó Marysol (23-oct-2026). El botón de cada alumno abre
+     WhatsApp con el que le toca ya escrito; se puede retocar antes de
+     mandarlo. Se rellenan solos:
+       {nombre}   primer nombre del alumno
+       {fecha}    «Lunes 26 de octubre»
+       {horario}  sus horas dentro de la sesión (si es escalonada, las suyas)
+       {lugar}    el lugar de la sesión (arriba, en sesiones → lugar);
+                  vacío = «te lo confirmamos por aquí»  */
+  mensajes: {
+    convocado: `¡Hola, {nombre}! 👋
+
+Muchas gracias por querer ser parte de nuestra próxima campaña de IBERO Tijuana. ❤️
+
+Nos emociona muchísimo que nuestras y nuestros estudiantes sean quienes representen a la universidad y le den vida a esta campaña.
+
+Para esta primera sesión, logramos hacer coincidir tu disponibilidad con uno de nuestros horarios de producción:
+
+📅 Fecha: {fecha}
+🕐 Horario: {horario}
+📍 Lugar: {lugar}
+
+👕 Un detalle para ese día: ven con ropa en tonos claros (blanco, beige o gris claro) y súmale algo rojo, como un suéter, una gorra o una chamarra. De preferencia sin logotipos de otras marcas.
+
+Gracias por sumarte y por ayudarnos a mostrar a la comunidad que hace IBERO todos los días. ✨
+
+¡Nos vemos pronto!`,
+    noConvocado: `¡Hola, {nombre}! 👋
+
+Muchas gracias por querer ser parte de nuestra próxima campaña de IBERO Tijuana. ❤️
+
+Para esta primera ronda de sesiones estuvimos armando los grupos de acuerdo con la disponibilidad de horarios y, en esta ocasión, no logramos hacer coincidir los tiempos.
+
+Pero queremos seguir contando contigo. Esta campaña busca construirse con nuestras y nuestros estudiantes, porque son ustedes quienes le dan vida y personalidad a IBERO.
+
+Esperamos poder integrarte en las siguientes sesiones. ✨
+
+Gracias por sumarte y por querer ser parte de la imagen de nuestra comunidad.`,
+  },
+  /* Ladas de Estados Unidos: esos números van con +1 y no con +52.
+     (Varios alumnos de Tijuana tienen número de San Diego.) */
+  ladasEstadosUnidos: ['619', '858', '760', '909', '951', '949', '714', '657', '562', '213', '310', '323', '424', '626', '818', '747'],
 
   /* Estados que el equipo le pone a cada registro. */
   estados: ['nueva', 'convocada', 'descartada'],
 
-  version: '1.14',
+  version: '1.15',
 };

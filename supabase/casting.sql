@@ -49,6 +49,9 @@ alter table public.casting add column if not exists genero text not null default
 -- Sesión a la que se convocó (id de config.sesiones) o vacío. Se
 -- asigna desde el apartado «Sesiones» de la vista del equipo.
 alter table public.casting add column if not exists sesion text not null default '';
+-- Qué mensaje de WhatsApp se le mandó y cuándo: 'convocado|<fecha ISO>' o
+-- 'no-convocado|<fecha ISO>'. Lo marca el botón de la vista del equipo.
+alter table public.casting add column if not exists avisado text not null default '';
 
 alter table public.casting drop constraint if exists casting_estado_check;
 alter table public.casting add constraint casting_estado_check
@@ -92,6 +95,7 @@ create policy "registrarse" on public.casting
     and telefono ~ '^[0-9]{10}$'
     and genero in ('', 'mujer', 'hombre', 'otro')
     and sesion = ''
+    and avisado = ''
     and char_length(instagram) <= 40
     and (consentimientos->>'datos')::boolean = true
     and (consentimientos->>'imagen')::boolean = true

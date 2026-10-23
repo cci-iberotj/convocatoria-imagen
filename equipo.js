@@ -101,6 +101,84 @@ function horasEn(r, s) {
   for (let h = a; h < b; h++) if (disp.has(Semana.clave(s.dia, h))) puede.push(h);
   return { total: b - a, puede };
 }
+/* ── WhatsApp ───────────────────────────────────────────── */
+const ICONO_WA = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.1.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.2c0-.1-.2-.2-.4-.3z"/></svg>';
+const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+/* Número completo para wa.me: 52 + 10 dígitos, o 1 si la lada es de EE. UU. */
+function numeroWA(t) {
+  const d = String(t || '').replace(/\D/g, '');
+  if (d.length > 10) return d;                                  // ya trae país
+  return ((CONFIG.ladasEstadosUnidos || []).includes(d.slice(0, 3)) ? '1' : '52') + d;
+}
+function primerNombre(r) {
+  const n = String(r.nombre || '').trim().split(/\s+/)[0] || '';
+  return n.charAt(0).toUpperCase() + n.slice(1).toLowerCase();
+}
+/* Sus horas dentro de la sesión: si puede todas, la de la sesión; si es
+   escalonada, de su primera hora marcada a la última. */
+function horarioDe(r, s) {
+  const h = horasEn(r, s);
+  const [a, b] = s.hora.split('–').map(x => parseInt(x, 10));
+  const ini = h.puede.length && h.puede.length < h.total ? Math.min(...h.puede) : a;
+  const fin = h.puede.length && h.puede.length < h.total ? Math.max(...h.puede) + 1 : b;
+  return String(ini).padStart(2, '0') + ':00 a ' + String(fin).padStart(2, '0') + ':00 h';
+}
+function fechaLarga(iso) {
+  const [y, m, d] = iso.split('-').map(Number);
+  const f = new Date(y, m - 1, d);
+  const dia = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'][f.getDay()];
+  return dia.charAt(0).toUpperCase() + dia.slice(1) + ' ' + d + ' de ' + MESES[m - 1];
+}
+function tipoMensaje(r) { return r.sesion ? 'convocado' : 'no-convocado'; }
+function mensajeDe(r) {
+  const s = (CONFIG.sesiones || []).find(x => x.id === r.sesion);
+  if (s) {
+    return CONFIG.mensajes.convocado
+      .replaceAll('{nombre}', primerNombre(r))
+      .replaceAll('{fecha}', fechaLarga(s.dia))
+      .replaceAll('{horario}', horarioDe(r, s))
+      .replaceAll('{lugar}', s.lugar || 'te lo confirmamos por aquí');
+  }
+  return CONFIG.mensajes.noConvocado.replaceAll('{nombre}', primerNombre(r));
+}
+/* ¿Ya se le mandó el mensaje que le toca ahora? Si cambió de convocado a
+   no convocado (o al revés), el aviso anterior ya no cuenta. */
+function avisadoAhora(r) {
+  const [tipo, cuando] = String(r.avisado || '').split('|');
+  return tipo === tipoMensaje(r) ? cuando : '';
+}
+function botonWA(r, grande) {
+  const cuando = avisadoAhora(r);
+  const titulo = 'WhatsApp +' + numeroWA(r.telefono) + ' · mensaje de ' + (r.sesion ? 'convocado' : 'no convocado');
+  if (cuando) {
+    return `<button type="button" class="wa hecho" data-wa="${esc(r.folio)}" title="${esc(titulo)} · enviado ${esc(fecha(cuando))}. Clic para abrirlo otra vez.">${ICONO_WA}${grande ? 'Enviado ' + esc(fecha(cuando)) + ' · reenviar' : '✓ Avisado'}</button>`;
+  }
+  return `<button type="button" class="wa" data-wa="${esc(r.folio)}" title="${esc(titulo)}">${ICONO_WA}${grande ? (r.sesion ? 'Mandar convocatoria por WhatsApp' : 'Mandar aviso de no convocado') : 'Avisar'}</button>`;
+}
+/* Abre WhatsApp con el mensaje y lo marca como avisado. */
+async function mandarWA(folio) {
+  const r = todos.find(x => x.folio === folio);
+  if (!r) return;
+  window.open('https://wa.me/' + numeroWA(r.telefono) + '?text=' + encodeURIComponent(mensajeDe(r)), '_blank', 'noopener');
+  const cambios = { avisado: tipoMensaje(r) + '|' + new Date().toISOString() };
+  try {
+    await Almacen.actualizar(folio, cambios);
+    Object.assign(r, cambios);
+    pintarTodo();
+    if (abierto === folio) pintarWAFicha(r);
+  } catch (e) { /* el mensaje ya se abrió; sólo no quedó marcado */ }
+}
+function conectarWA(raiz) {
+  $$('[data-wa]', raiz).forEach(b => b.addEventListener('click', ev => { ev.stopPropagation(); mandarWA(b.dataset.wa); }));
+}
+function pintarWAFicha(r) {
+  const caja = $('#ficha-wa');
+  if (!caja) return;
+  caja.innerHTML = botonWA(r, true) + '<small>+' + esc(numeroWA(r.telefono)) + '</small>';
+  conectarWA(caja);
+}
+
 function pintarSesiones() {
   const caja = $('#sesiones');
   if (!caja) return;
@@ -117,6 +195,7 @@ function pintarSesiones() {
       return `<div class="persona" data-folio="${esc(r.folio)}" title="Abrir ficha">
         ${r.foto ? `<img src="${r.foto}" alt="">` : `<div class="sinfoto">${esc((r.nombre || '?')[0])}</div>`}
         <div class="quien"><b>${esc(r.nombre)}</b><small>${esc(r.carrera)} · ${texto}</small></div>
+        ${botonWA(r)}
         <button type="button" class="quitar" data-quitar="${esc(r.folio)}" title="Quitar de esta sesión">×</button>
       </div>`;
     }).join('');
@@ -131,9 +210,32 @@ function pintarSesiones() {
       <div class="agregar"><select data-agregar="${esc(s.id)}"><option value="">Agregar a alguien… (✓ puede todas las horas, ~ algunas)</option>${opciones}</select></div>
     </div>`;
   }).join('');
-  $$('#sesiones .persona').forEach(p => p.addEventListener('click', ev => { if (!ev.target.closest('.quitar')) abrirFicha(p.dataset.folio); }));
+  $$('#sesiones .persona').forEach(p => p.addEventListener('click', ev => { if (!ev.target.closest('.quitar') && !ev.target.closest('.wa')) abrirFicha(p.dataset.folio); }));
   $$('#sesiones [data-quitar]').forEach(b => b.addEventListener('click', ev => { ev.stopPropagation(); asignar(b.dataset.quitar, ''); }));
   $$('#sesiones [data-agregar]').forEach(sel => sel.addEventListener('change', () => { if (sel.value) asignar(sel.value, sel.dataset.agregar); }));
+
+  /* Los que no quedaron: sólo de las carreras que tienen sesión (por ahora
+     se trabaja con esas), sin descartados. Llevan el mensaje de no convocado. */
+  const carrerasConSesion = new Set((CONFIG.sesiones || []).flatMap(s => s.carreras));
+  const fuera = todos.filter(r => !r.sesion && r.estado !== 'descartada' && carrerasConSesion.has(r.carrera))
+    .sort((a, b) => a.carrera.localeCompare(b.carrera, 'es') || a.nombre.localeCompare(b.nombre, 'es'));
+  if (fuera.length) {
+    const div = document.createElement('div');
+    div.className = 'sesion no-convocados';
+    div.innerHTML = `<div class="cuando"><b>No convocados</b><span>de estas carreras</span><span>· ${fuera.length}</span></div>
+      <div class="quienes">${fuera.map(r => `<div class="persona" data-folio="${esc(r.folio)}" title="Abrir ficha">
+        ${r.foto ? `<img src="${r.foto}" alt="">` : `<div class="sinfoto">${esc((r.nombre || '?')[0])}</div>`}
+        <div class="quien"><b>${esc(r.nombre)}</b><small>${esc(r.carrera)}</small></div>
+        ${botonWA(r)}<span></span></div>`).join('')}</div>`;
+    caja.append(div);
+    $$('.persona', div).forEach(p => p.addEventListener('click', ev => { if (!ev.target.closest('.wa')) abrirFicha(p.dataset.folio); }));
+  }
+  conectarWA(caja);
+
+  const conv = todos.filter(r => r.sesion);
+  const resumen = $('#avisos-resumen');
+  if (resumen) resumen.innerHTML = 'Avisados por WhatsApp: <b>' + conv.filter(avisadoAhora).length + ' de ' + conv.length + '</b> convocados · <b>'
+    + fuera.filter(avisadoAhora).length + ' de ' + fuera.length + '</b> no convocados. El botón abre WhatsApp con el mensaje ya escrito y lo marca como enviado.';
 }
 /* Poner (o quitar) a un alumno en una sesión. Con sesión queda
    convocado; sin sesión vuelve a «nueva» salvo que esté descartado. */
@@ -354,6 +456,7 @@ function abrirFicha(folio) {
   $('#ficha-estado').value = r.estado || 'nueva';
   $('#ficha-genero').value = r.genero || '';
   $('#ficha-sesion').value = r.sesion || '';
+  pintarWAFicha(r);
   $('#ficha-folio').value = r.folio;
   $('#ficha-nota').value = r.nota || '';
   $('#ficha-aviso').classList.add('oculto');
