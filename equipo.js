@@ -148,7 +148,15 @@ function avisadoAhora(r) {
   const [tipo, cuando] = String(r.avisado || '').split('|');
   return tipo === tipoMensaje(r) ? cuando : '';
 }
+/* Abrir WhatsApp no quiere decir que se mandó: después de abrirlo, el
+   botón pregunta «¿Se envió?» y sólo el «Sí» lo marca en la base. */
+const porConfirmar = new Set();
 function botonWA(r, grande) {
+  if (porConfirmar.has(r.folio)) {
+    return `<span class="wa-confirma" data-wa-caja="${esc(r.folio)}">¿Se envió?
+      <button type="button" class="wa si" data-wa-si="${esc(r.folio)}">Sí</button>
+      <button type="button" class="wa no" data-wa-no="${esc(r.folio)}">No</button></span>`;
+  }
   const cuando = avisadoAhora(r);
   const titulo = 'WhatsApp +' + numeroWA(r.telefono) + ' · mensaje de ' + (r.sesion ? 'convocado' : 'no convocado');
   if (cuando) {
@@ -156,28 +164,42 @@ function botonWA(r, grande) {
   }
   return `<button type="button" class="wa" data-wa="${esc(r.folio)}" title="${esc(titulo)}">${ICONO_WA}${grande ? (r.sesion ? 'Mandar convocatoria por WhatsApp' : 'Mandar aviso de no convocado') : 'Avisar'}</button>`;
 }
-/* Abre WhatsApp con el mensaje y lo marca como avisado. */
-async function mandarWA(folio) {
+/* Abre WhatsApp con el mensaje; queda «por confirmar» hasta el Sí. */
+function mandarWA(folio) {
   const r = todos.find(x => x.folio === folio);
   if (!r) return;
   /* Directo a api.whatsapp.com y no a wa.me: el enlace corto, al redirigir,
      cambia cada emoji por «�» (comprobado el 23-oct-2026). */
   window.open('https://api.whatsapp.com/send?phone=' + numeroWA(r.telefono) + '&text=' + encodeURIComponent(mensajeDe(r)), '_blank', 'noopener');
-  const cambios = { avisado: tipoMensaje(r) + '|' + new Date().toISOString() };
+  porConfirmar.add(folio);
+  pintarTodo();
+  if (abierto === folio) pintarWAFicha(r);
+}
+/* Guarda (o quita) la marca de avisado. */
+async function marcarAvisado(folio, si) {
+  const r = todos.find(x => x.folio === folio);
+  porConfirmar.delete(folio);
+  if (!r) return;
+  const cambios = { avisado: si ? tipoMensaje(r) + '|' + new Date().toISOString() : '' };
   try {
     await Almacen.actualizar(folio, cambios);
     Object.assign(r, cambios);
-    pintarTodo();
-    if (abierto === folio) pintarWAFicha(r);
-  } catch (e) { /* el mensaje ya se abrió; sólo no quedó marcado */ }
+  } catch (e) { alert('No se guardó la marca: ' + e.message); }
+  pintarTodo();
+  if (abierto === folio) pintarWAFicha(r);
 }
 function conectarWA(raiz) {
-  $$('[data-wa]', raiz).forEach(b => b.addEventListener('click', ev => { ev.stopPropagation(); mandarWA(b.dataset.wa); }));
+  const parar = (b, fn) => b.addEventListener('click', ev => { ev.stopPropagation(); fn(); });
+  $$('[data-wa]', raiz).forEach(b => parar(b, () => mandarWA(b.dataset.wa)));
+  $$('[data-wa-si]', raiz).forEach(b => parar(b, () => marcarAvisado(b.dataset.waSi, true)));
+  $$('[data-wa-no]', raiz).forEach(b => parar(b, () => { porConfirmar.delete(b.dataset.waNo); pintarTodo(); const r = todos.find(x => x.folio === b.dataset.waNo); if (r && abierto === r.folio) pintarWAFicha(r); }));
+  $$('[data-wa-quitar]', raiz).forEach(b => parar(b, () => marcarAvisado(b.dataset.waQuitar, false)));
 }
 function pintarWAFicha(r) {
   const caja = $('#ficha-wa');
   if (!caja) return;
-  caja.innerHTML = botonWA(r, true) + '<small>+' + esc(numeroWA(r.telefono)) + '</small>';
+  caja.innerHTML = botonWA(r, true) + '<small>+' + esc(numeroWA(r.telefono)) + '</small>'
+    + (avisadoAhora(r) && !porConfirmar.has(r.folio) ? '<button type="button" class="btn suave chico" data-wa-quitar="' + esc(r.folio) + '">Desmarcar</button>' : '');
   conectarWA(caja);
 }
 
@@ -212,7 +234,7 @@ function pintarSesiones() {
       <div class="agregar"><select data-agregar="${esc(s.id)}"><option value="">Agregar a alguien… (✓ puede todas las horas, ~ algunas)</option>${opciones}</select></div>
     </div>`;
   }).join('');
-  $$('#sesiones .persona').forEach(p => p.addEventListener('click', ev => { if (!ev.target.closest('.quitar') && !ev.target.closest('.wa')) abrirFicha(p.dataset.folio); }));
+  $$('#sesiones .persona').forEach(p => p.addEventListener('click', ev => { if (!ev.target.closest('.quitar') && !ev.target.closest('.wa') && !ev.target.closest('.wa-confirma')) abrirFicha(p.dataset.folio); }));
   $$('#sesiones [data-quitar]').forEach(b => b.addEventListener('click', ev => { ev.stopPropagation(); asignar(b.dataset.quitar, ''); }));
   $$('#sesiones [data-agregar]').forEach(sel => sel.addEventListener('change', () => { if (sel.value) asignar(sel.value, sel.dataset.agregar); }));
 
@@ -230,14 +252,14 @@ function pintarSesiones() {
         <div class="quien"><b>${esc(r.nombre)}</b><small>${esc(r.carrera)}</small></div>
         ${botonWA(r)}<span></span></div>`).join('')}</div>`;
     caja.append(div);
-    $$('.persona', div).forEach(p => p.addEventListener('click', ev => { if (!ev.target.closest('.wa')) abrirFicha(p.dataset.folio); }));
+    $$('.persona', div).forEach(p => p.addEventListener('click', ev => { if (!ev.target.closest('.wa') && !ev.target.closest('.wa-confirma')) abrirFicha(p.dataset.folio); }));
   }
   conectarWA(caja);
 
   const conv = todos.filter(r => r.sesion);
   const resumen = $('#avisos-resumen');
   if (resumen) resumen.innerHTML = 'Avisados por WhatsApp: <b>' + conv.filter(avisadoAhora).length + ' de ' + conv.length + '</b> convocados · <b>'
-    + fuera.filter(avisadoAhora).length + ' de ' + fuera.length + '</b> no convocados. El botón abre WhatsApp con el mensaje ya escrito y lo marca como enviado.';
+    + fuera.filter(avisadoAhora).length + ' de ' + fuera.length + '</b> no convocados. El botón abre WhatsApp con el mensaje ya escrito; al volver, confirma con «Sí» si lo enviaste.';
 }
 /* Poner (o quitar) a un alumno en una sesión. Con sesión queda
    convocado; sin sesión vuelve a «nueva» salvo que esté descartado. */

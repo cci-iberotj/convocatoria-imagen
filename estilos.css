@@ -297,6 +297,10 @@ footer.pie a { color: inherit; }
 .wa:hover { background: var(--ok-velo); }
 .wa.hecho { border-color: var(--linea-sutil); color: var(--tinta-tenue); font-weight: 600; }
 .wa.hecho:hover { background: var(--capa-1); }
+.wa-confirma { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: var(--alerta); white-space: nowrap; }
+.wa-confirma .wa { padding: 3px 9px; }
+.wa-confirma .wa.si { background: var(--ok); color: #fff; border-color: var(--ok); }
+.wa-confirma .wa.no { color: var(--tinta-tenue); border-color: var(--linea-control); }
 .sesion .persona { grid-template-columns: 30px 1fr auto auto; }
 .sesion.no-convocados { background: var(--capa-0); border-style: dashed; }
 .avisos-resumen { margin-top: 12px; }
