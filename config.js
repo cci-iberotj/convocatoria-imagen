@@ -180,9 +180,9 @@ const CONFIG = {
      y las carreras que le tocan (sólo para sugerir a quién agregar;
      se puede meter a cualquiera). Si cambia el plan, se cambia aquí. */
   sesiones: [
-    { id: 'lun-ing', dia: '2026-10-26', hora: '14:00–16:00', lugar: '', nombre: 'Ingenierías y Arquitectura', carreras: ['Arquitectura', 'Ingeniería en Mecatrónica', 'Ingeniería Industrial en Manufactura Inteligente'] },
     { id: 'mar-com', dia: '2026-10-27', hora: '14:00–17:00', lugar: '', nombre: 'Comunicación y Derecho',     carreras: ['Comunicación', 'Derecho'] },
     { id: 'mie-med', dia: '2026-10-28', hora: '12:00–14:00', lugar: '', nombre: 'Medicina y Enfermería',      carreras: ['Medicina', 'Enfermería'] },
+    { id: 'vie-ing', dia: '2026-10-30', hora: '12:00–15:00', lugar: '', nombre: 'Ingenierías y Arquitectura', carreras: ['Arquitectura', 'Ingeniería en Mecatrónica', 'Ingeniería Industrial en Manufactura Inteligente'] },
   ],
 
   /* ── Mensajes por WhatsApp ──────────────────────────────
@@ -231,5 +231,5 @@ Gracias por sumarte y por querer ser parte de la imagen de nuestra comunidad.`,
   /* Estados que el equipo le pone a cada registro. */
   estados: ['nueva', 'convocada', 'descartada'],
 
-  version: '1.15',
+  version: '1.16',
 };
