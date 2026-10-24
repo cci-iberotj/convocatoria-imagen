@@ -238,15 +238,14 @@ function pintarSesiones() {
   $$('#sesiones [data-quitar]').forEach(b => b.addEventListener('click', ev => { ev.stopPropagation(); asignar(b.dataset.quitar, ''); }));
   $$('#sesiones [data-agregar]').forEach(sel => sel.addEventListener('change', () => { if (sel.value) asignar(sel.value, sel.dataset.agregar); }));
 
-  /* Los que no quedaron: sólo de las carreras que tienen sesión (por ahora
-     se trabaja con esas), sin descartados. Llevan el mensaje de no convocado. */
-  const carrerasConSesion = new Set((CONFIG.sesiones || []).flatMap(s => s.carreras));
-  const fuera = todos.filter(r => !r.sesion && r.estado !== 'descartada' && carrerasConSesion.has(r.carrera))
+  /* Los que no quedaron, de cualquier carrera, sin descartados. Todos
+     reciben el mensaje de no convocado. */
+  const fuera = todos.filter(r => !r.sesion && r.estado !== 'descartada')
     .sort((a, b) => a.carrera.localeCompare(b.carrera, 'es') || a.nombre.localeCompare(b.nombre, 'es'));
   if (fuera.length) {
     const div = document.createElement('div');
     div.className = 'sesion no-convocados';
-    div.innerHTML = `<div class="cuando"><b>No convocados</b><span>de estas carreras</span><span>· ${fuera.length}</span></div>
+    div.innerHTML = `<div class="cuando"><b>No convocados</b><span>todas las carreras</span><span>· ${fuera.length}</span></div>
       <div class="quienes">${fuera.map(r => `<div class="persona" data-folio="${esc(r.folio)}" title="Abrir ficha">
         ${r.foto ? `<img src="${r.foto}" alt="">` : `<div class="sinfoto">${esc((r.nombre || '?')[0])}</div>`}
         <div class="quien"><b>${esc(r.nombre)}</b><small>${esc(r.carrera)}</small></div>
