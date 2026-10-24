@@ -160,7 +160,9 @@ function botonWA(r, grande) {
 async function mandarWA(folio) {
   const r = todos.find(x => x.folio === folio);
   if (!r) return;
-  window.open('https://wa.me/' + numeroWA(r.telefono) + '?text=' + encodeURIComponent(mensajeDe(r)), '_blank', 'noopener');
+  /* Directo a api.whatsapp.com y no a wa.me: el enlace corto, al redirigir,
+     cambia cada emoji por «�» (comprobado el 23-oct-2026). */
+  window.open('https://api.whatsapp.com/send?phone=' + numeroWA(r.telefono) + '&text=' + encodeURIComponent(mensajeDe(r)), '_blank', 'noopener');
   const cambios = { avisado: tipoMensaje(r) + '|' + new Date().toISOString() };
   try {
     await Almacen.actualizar(folio, cambios);
@@ -441,7 +443,7 @@ function abrirFicha(folio) {
   $('#ficha-datos').innerHTML =
     '<dt>Carrera · semestre</dt><dd>' + esc(r.carrera) + ' · ' + semestreTexto(r.semestre) + '</dd>' +
     '<dt>Correo</dt><dd><a href="mailto:' + esc(r.correo) + '">' + esc(r.correo) + '</a></dd>' +
-    '<dt>Teléfono · WhatsApp</dt><dd><a href="https://wa.me/52' + esc(r.telefono) + '" target="_blank" rel="noopener">' + telefono(r.telefono) + '</a></dd>' +
+    '<dt>Teléfono · WhatsApp</dt><dd><a href="https://api.whatsapp.com/send?phone=' + esc(numeroWA(r.telefono)) + '" target="_blank" rel="noopener">' + telefono(r.telefono) + '</a></dd>' +
     '<dt>Registrado</dt><dd>' + fecha(r.creado) + '</dd>';
   const disp = new Set(r.disponibilidad || []);
   $('#ficha-horas').textContent = '· ' + disp.size + ' horas';
