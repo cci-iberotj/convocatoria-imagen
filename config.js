@@ -195,6 +195,9 @@ const CONFIG = {
        {lugar}    el lugar de la sesión (arriba, en sesiones → lugar);
                   vacío = «te lo confirmamos por aquí»  */
   mensajes: {
+    /* Asuntos del correo (el botón ✉ usa el mismo texto que WhatsApp). */
+    asuntoConvocado:   'Tu sesión de fotos y video · IBERO Tijuana',
+    asuntoNoConvocado: 'Convocatoria «Sé parte de la imagen de IBERO Tijuana»',
     convocado: `¡Hola, {nombre}! 👋
 
 Muchas gracias por querer ser parte de nuestra próxima campaña de IBERO Tijuana. ❤️
@@ -231,5 +234,5 @@ Gracias por sumarte y por querer ser parte de la imagen de nuestra comunidad.`,
   /* Estados que el equipo le pone a cada registro. */
   estados: ['nueva', 'convocada', 'descartada'],
 
-  version: '1.20',
+  version: '1.21',
 };

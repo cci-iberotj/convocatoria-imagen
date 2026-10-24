@@ -150,7 +150,7 @@ function avisadoAhora(r) {
 }
 /* Abrir WhatsApp no quiere decir que se mandó: después de abrirlo, el
    botón pregunta «¿Se envió?» y sólo el «Sí» lo marca en la base. */
-const porConfirmar = new Set();
+const porConfirmar = new Map();   // folio → 'whatsapp' | 'correo'
 function botonWA(r, grande) {
   if (porConfirmar.has(r.folio)) {
     return `<span class="wa-confirma" data-wa-caja="${esc(r.folio)}">¿Se envió?
@@ -158,11 +158,13 @@ function botonWA(r, grande) {
       <button type="button" class="wa no" data-wa-no="${esc(r.folio)}">No</button></span>`;
   }
   const cuando = avisadoAhora(r);
+  const canal = String(r.avisado || '').split('|')[2] === 'correo' ? 'correo' : 'WhatsApp';
   const titulo = 'WhatsApp +' + numeroWA(r.telefono) + ' · mensaje de ' + (r.sesion ? 'convocado' : 'no convocado');
+  const correo = `<button type="button" class="wa correo" data-correo="${esc(r.folio)}" title="Correo a ${esc(r.correo)} (abre Outlook y copia el mensaje)">✉${grande ? ' Por correo' : ''}</button>`;
   if (cuando) {
-    return `<button type="button" class="wa hecho" data-wa="${esc(r.folio)}" title="${esc(titulo)} · enviado ${esc(fecha(cuando))}. Clic para abrirlo otra vez.">${ICONO_WA}${grande ? 'Enviado ' + esc(fecha(cuando)) + ' · reenviar' : '✓ Avisado'}</button>`;
+    return `<button type="button" class="wa hecho" data-wa="${esc(r.folio)}" title="${esc(titulo)} · enviado por ${canal} ${esc(fecha(cuando))}. Clic para abrirlo otra vez.">${ICONO_WA}${grande ? 'Enviado por ' + canal + ' ' + esc(fecha(cuando)) + ' · reenviar' : '✓ Avisado'}</button>${correo}`;
   }
-  return `<button type="button" class="wa" data-wa="${esc(r.folio)}" title="${esc(titulo)}">${ICONO_WA}${grande ? (r.sesion ? 'Mandar convocatoria por WhatsApp' : 'Mandar aviso de no convocado') : 'Avisar'}</button>`;
+  return `<button type="button" class="wa" data-wa="${esc(r.folio)}" title="${esc(titulo)}">${ICONO_WA}${grande ? (r.sesion ? 'Mandar convocatoria por WhatsApp' : 'Mandar aviso de no convocado') : 'Avisar'}</button>${correo}`;
 }
 /* Abre WhatsApp con el mensaje; queda «por confirmar» hasta el Sí. */
 function mandarWA(folio) {
@@ -171,16 +173,41 @@ function mandarWA(folio) {
   /* Directo a api.whatsapp.com y no a wa.me: el enlace corto, al redirigir,
      cambia cada emoji por «�» (comprobado el 23-oct-2026). */
   window.open('https://api.whatsapp.com/send?phone=' + numeroWA(r.telefono) + '&text=' + encodeURIComponent(mensajeDe(r)), '_blank', 'noopener');
-  porConfirmar.add(folio);
+  porConfirmar.set(folio, 'whatsapp');
   pintarTodo();
   if (abierto === folio) pintarWAFicha(r);
+}
+/* Correo: abre un correo nuevo en Outlook (o el programa de correo de la
+   computadora) con asunto y mensaje, y además copia el mensaje al
+   portapapeles, porque algunos Outlook descomponen acentos y emojis que
+   llegan por la liga: en ese caso se borra el cuerpo y se pega. */
+function mandarCorreo(folio) {
+  const r = todos.find(x => x.folio === folio);
+  if (!r) return;
+  const asunto = r.sesion ? CONFIG.mensajes.asuntoConvocado : CONFIG.mensajes.asuntoNoConvocado;
+  const cuerpo = mensajeDe(r);
+  try { navigator.clipboard.writeText(cuerpo); } catch (e) {}
+  const a = document.createElement('a');
+  a.href = 'mailto:' + encodeURIComponent(r.correo) + '?subject=' + encodeURIComponent(asunto) + '&body=' + encodeURIComponent(cuerpo);
+  document.body.append(a); a.click(); a.remove();
+  aviso('Se abrió el correo para ' + r.correo + '. El mensaje también quedó copiado: si en Outlook se ve raro, bórralo y pega con Ctrl + V.');
+  porConfirmar.set(folio, 'correo');
+  pintarTodo();
+  if (abierto === folio) pintarWAFicha(r);
+}
+function aviso(texto) {
+  let t = $('#aviso-flotante');
+  if (!t) { t = document.createElement('div'); t.id = 'aviso-flotante'; document.body.append(t); }
+  t.textContent = texto; t.classList.add('visible');
+  clearTimeout(aviso.reloj); aviso.reloj = setTimeout(() => t.classList.remove('visible'), 6000);
 }
 /* Guarda (o quita) la marca de avisado. */
 async function marcarAvisado(folio, si) {
   const r = todos.find(x => x.folio === folio);
+  const canal = porConfirmar.get(folio) || 'whatsapp';
   porConfirmar.delete(folio);
   if (!r) return;
-  const cambios = { avisado: si ? tipoMensaje(r) + '|' + new Date().toISOString() : '' };
+  const cambios = { avisado: si ? tipoMensaje(r) + '|' + new Date().toISOString() + '|' + canal : '' };
   try {
     await Almacen.actualizar(folio, cambios);
     Object.assign(r, cambios);
@@ -191,6 +218,7 @@ async function marcarAvisado(folio, si) {
 function conectarWA(raiz) {
   const parar = (b, fn) => b.addEventListener('click', ev => { ev.stopPropagation(); fn(); });
   $$('[data-wa]', raiz).forEach(b => parar(b, () => mandarWA(b.dataset.wa)));
+  $$('[data-correo]', raiz).forEach(b => parar(b, () => mandarCorreo(b.dataset.correo)));
   $$('[data-wa-si]', raiz).forEach(b => parar(b, () => marcarAvisado(b.dataset.waSi, true)));
   $$('[data-wa-no]', raiz).forEach(b => parar(b, () => { porConfirmar.delete(b.dataset.waNo); pintarTodo(); const r = todos.find(x => x.folio === b.dataset.waNo); if (r && abierto === r.folio) pintarWAFicha(r); }));
   $$('[data-wa-quitar]', raiz).forEach(b => parar(b, () => marcarAvisado(b.dataset.waQuitar, false)));
@@ -198,7 +226,7 @@ function conectarWA(raiz) {
 function pintarWAFicha(r) {
   const caja = $('#ficha-wa');
   if (!caja) return;
-  caja.innerHTML = botonWA(r, true) + '<small>+' + esc(numeroWA(r.telefono)) + '</small>'
+  caja.innerHTML = botonWA(r, true) + '<small>+' + esc(numeroWA(r.telefono)) + ' · ' + esc(r.correo) + '</small>'
     + (avisadoAhora(r) && !porConfirmar.has(r.folio) ? '<button type="button" class="btn suave chico" data-wa-quitar="' + esc(r.folio) + '">Desmarcar</button>' : '');
   conectarWA(caja);
 }

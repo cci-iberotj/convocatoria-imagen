@@ -301,7 +301,13 @@ footer.pie a { color: inherit; }
 .wa-confirma .wa { padding: 3px 9px; }
 .wa-confirma .wa.si { background: var(--ok); color: #fff; border-color: var(--ok); }
 .wa-confirma .wa.no { color: var(--tinta-tenue); border-color: var(--linea-control); }
-.sesion .persona { grid-template-columns: 30px 1fr auto auto; }
+.sesion .persona { grid-template-columns: 30px 1fr auto auto auto; }
+.wa.correo { border-color: var(--info); color: var(--info); padding: 4px 8px; }
+.wa.correo:hover { background: var(--info-velo); }
+#aviso-flotante { position: fixed; left: 50%; bottom: 20px; transform: translate(-50%, 140%); max-width: min(92vw, 560px);
+  background: var(--tinta); color: #fff; font-size: 13.5px; line-height: 1.4; padding: 12px 16px; border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25); transition: transform .25s; z-index: 80; }
+#aviso-flotante.visible { transform: translate(-50%, 0); }
 .sesion.no-convocados { background: var(--capa-0); border-style: dashed; }
 .avisos-resumen { margin-top: 12px; }
 .avisos-resumen b { color: var(--tinta); }
