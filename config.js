@@ -226,6 +226,19 @@ Pero queremos seguir contando contigo. Esta campaña busca construirse con nuest
 Esperamos poder integrarte en las siguientes sesiones. ✨
 
 Gracias por sumarte y por querer ser parte de la imagen de nuestra comunidad.`,
+    /* Para quien no fue convocado porque su carrera todavía no tiene
+       sesión (no por horario). {carrera} se rellena sola. */
+    carreraSinSesion: `¡Hola, {nombre}! 👋
+
+Muchas gracias por querer ser parte de nuestra próxima campaña de IBERO Tijuana. ❤️
+
+Esta primera ronda de sesiones la estamos dedicando a algunas carreras en específico, y {carrera} será parte de las siguientes. Por eso todavía no te citamos, pero tu registro ya está con nosotros.
+
+Queremos seguir contando contigo: esta campaña busca construirse con nuestras y nuestros estudiantes, porque son ustedes quienes le dan vida y personalidad a IBERO.
+
+En cuanto tengamos fecha para {carrera}, te escribimos por aquí. ✨
+
+Gracias por sumarte y por querer ser parte de la imagen de nuestra comunidad.`,
   },
   /* Ladas de Estados Unidos: esos números van con +1 y no con +52.
      (Varios alumnos de Tijuana tienen número de San Diego.) */
@@ -234,5 +247,5 @@ Gracias por sumarte y por querer ser parte de la imagen de nuestra comunidad.`,
   /* Estados que el equipo le pone a cada registro. */
   estados: ['nueva', 'convocada', 'descartada'],
 
-  version: '1.21',
+  version: '1.22',
 };

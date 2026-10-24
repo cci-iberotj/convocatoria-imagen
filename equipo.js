@@ -140,7 +140,14 @@ function mensajeDe(r) {
       .replaceAll('{horario}', horarioDe(r, s))
       .replaceAll('{lugar}', s.lugar || 'te lo confirmamos por aquí');
   }
-  return CONFIG.mensajes.noConvocado.replaceAll('{nombre}', primerNombre(r));
+  /* No convocado: si su carrera ni siquiera tiene sesión todavía, el
+     mensaje lo dice así; si sí tiene y no coincidió, el de horario. */
+  const plantilla = carreraTieneSesion(r.carrera) ? CONFIG.mensajes.noConvocado
+    : (CONFIG.mensajes.carreraSinSesion || CONFIG.mensajes.noConvocado);
+  return plantilla.replaceAll('{nombre}', primerNombre(r)).replaceAll('{carrera}', r.carrera);
+}
+function carreraTieneSesion(carrera) {
+  return (CONFIG.sesiones || []).some(s => s.carreras.includes(carrera));
 }
 /* ¿Ya se le mandó el mensaje que le toca ahora? Si cambió de convocado a
    no convocado (o al revés), el aviso anterior ya no cuenta. */
@@ -186,7 +193,7 @@ function mandarCorreo(folio) {
   if (!r) return;
   const asunto = r.sesion ? CONFIG.mensajes.asuntoConvocado : CONFIG.mensajes.asuntoNoConvocado;
   const cuerpo = mensajeDe(r);
-  try { navigator.clipboard.writeText(cuerpo); } catch (e) {}
+  try { navigator.clipboard.writeText(cuerpo).catch(() => {}); } catch (e) {}
   const a = document.createElement('a');
   a.href = 'mailto:' + encodeURIComponent(r.correo) + '?subject=' + encodeURIComponent(asunto) + '&body=' + encodeURIComponent(cuerpo);
   document.body.append(a); a.click(); a.remove();
@@ -276,7 +283,7 @@ function pintarSesiones() {
     div.innerHTML = `<div class="cuando"><b>No convocados</b><span>todas las carreras</span><span>· ${fuera.length}</span></div>
       <div class="quienes">${fuera.map(r => `<div class="persona" data-folio="${esc(r.folio)}" title="Abrir ficha">
         ${r.foto ? `<img src="${r.foto}" alt="">` : `<div class="sinfoto">${esc((r.nombre || '?')[0])}</div>`}
-        <div class="quien"><b>${esc(r.nombre)}</b><small>${esc(r.carrera)}</small></div>
+        <div class="quien"><b>${esc(r.nombre)}</b><small>${esc(r.carrera)} · <i class="${carreraTieneSesion(r.carrera) ? 'ojo' : ''}">${carreraTieneSesion(r.carrera) ? 'no coincidió el horario' : 'su carrera aún sin sesión'}</i></small></div>
         ${botonWA(r)}<span></span></div>`).join('')}</div>`;
     caja.append(div);
     $$('.persona', div).forEach(p => p.addEventListener('click', ev => { if (!ev.target.closest('.wa') && !ev.target.closest('.wa-confirma')) abrirFicha(p.dataset.folio); }));
