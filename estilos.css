@@ -321,20 +321,20 @@ footer.pie a { color: inherit; }
 .panel h3 { font-size: 15px; margin-bottom: 10px; }
 .panel h3 small { font-weight: 400; color: var(--tinta-tenue); font-size: 12.5px; }
 .barras { display: grid; gap: 5px; }
-.barra {
+.fila-carrera {
   display: grid; grid-template-columns: minmax(120px, 190px) 1fr 44px; align-items: center; gap: 10px;
   background: none; border: 0; padding: 3px 4px; border-radius: 8px; font: inherit; color: var(--tinta); cursor: pointer; text-align: left;
 }
-.barra:hover { background: var(--capa-1); }
-.barra.activo { background: color-mix(in srgb, var(--tono) 12%, white); }
-.barra .nombre { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 7px; }
-.barra .nombre i { width: 9px; height: 9px; border-radius: 50%; background: var(--tono); flex: none; }
-.barra .pista { height: 14px; background: var(--capa-hundida); border-radius: 7px; overflow: hidden; }
-.barra .pista b { display: block; height: 100%; background: var(--tono); border-radius: 7px; min-width: 2px; }
-.barra .n { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
-.barra .n small { font-weight: 400; color: var(--tinta-tenue); font-size: 11px; }
-.barra.cero { opacity: .55; }
-.barra.cero .pista b { display: none; }
+.fila-carrera:hover { background: var(--capa-1); }
+.fila-carrera.activo { background: color-mix(in srgb, var(--tono) 12%, white); }
+.fila-carrera .nombre { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 7px; }
+.fila-carrera .nombre i { width: 9px; height: 9px; border-radius: 50%; background: var(--tono); flex: none; }
+.fila-carrera .pista { height: 14px; background: var(--capa-hundida); border-radius: 7px; overflow: hidden; }
+.fila-carrera .pista b { display: block; height: 100%; background: var(--tono); border-radius: 7px; min-width: 2px; }
+.fila-carrera .n { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
+.fila-carrera .n small { font-weight: 400; color: var(--tinta-tenue); font-size: 11px; }
+.fila-carrera.cero { opacity: .55; }
+.fila-carrera.cero .pista b { display: none; }
 .faltan { margin-top: 10px; font-size: 13px; }
 .faltan b { color: var(--peligro); }
 .genero-barra { display: flex; height: 26px; border-radius: 8px; overflow: hidden; background: var(--capa-hundida); }

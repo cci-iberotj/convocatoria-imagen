@@ -191,22 +191,35 @@ const Almacen = (() => {
 })();
 
 /* ── La semana, compartida por las dos páginas ─────────── */
+/* Desde el 26-oct-2026 la disponibilidad es de una SEMANA TIPO (lunes a
+   viernes, sin fechas): el registro queda abierto para futuras sesiones.
+   Claves: 'lun|08'. Los registros anteriores se guardaron con fecha
+   ('2026-10-26|08', de la semana del 26 al 30, que fue de lunes a
+   viernes); normalizar() los convierte al día de la semana que les toca. */
 const Semana = (() => {
   const DIAS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
   const CORTO = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
-  const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio',
-                 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-  function fecha(i) {
-    const [y, m, d] = CONFIG.semana.inicio.split('-').map(Number);
-    const f = new Date(y, m - 1, d + i);
-    const iso = f.getFullYear() + '-' + String(f.getMonth() + 1).padStart(2, '0') + '-' + String(f.getDate()).padStart(2, '0');
-    return { iso, dia: DIAS[f.getDay()], corto: CORTO[f.getDay()], num: f.getDate(), mes: MESES[f.getMonth()] };
-  }
-  const dias = Array.from({ length: CONFIG.semana.dias }, (_, i) => fecha(i));
+  const dias = [1, 2, 3, 4, 5].slice(0, CONFIG.semana.dias).map(i => ({ iso: CORTO[i], dia: DIAS[i], corto: CORTO[i], num: '' }));
   const horas = [];
   for (let h = CONFIG.semana.horaInicio; h < CONFIG.semana.horaFin; h++) horas.push(h);
-  const clave = (iso, h) => iso + '|' + String(h).padStart(2, '0');
+  const clave = (dia, h) => dia + '|' + String(h).padStart(2, '0');
   const hh = h => String(h).padStart(2, '0') + ':00';
-  const rango = () => `${dias[0].dia} ${dias[0].num} al ${dias[dias.length - 1].dia} ${dias[dias.length - 1].num} de ${dias[dias.length - 1].mes}`;
-  return { dias, horas, clave, hh, rango };
+  const mayus = t => t.charAt(0).toUpperCase() + t.slice(1);
+  /* '2026-10-28' → 'mié' */
+  function diaDeFecha(iso) {
+    const [y, m, d] = String(iso).split('-').map(Number);
+    return CORTO[new Date(y, m - 1, d).getDay()];
+  }
+  /* '2026-10-28|12' → 'mié|12'; 'mié|12' se queda igual */
+  function normalizar(k) {
+    const [a, h] = String(k).split('|');
+    return /^\d{4}-\d{2}-\d{2}$/.test(a) ? diaDeFecha(a) + '|' + h : k;
+  }
+  return {
+    dias, horas, clave, hh, diaDeFecha, normalizar,
+    nombre: d => d.dia,                         // «lunes»
+    breve:  d => mayus(d.corto),                // «Lun»
+    cabeza: d => '<b>' + mayus(d.corto) + '</b>',
+    rango:  () => 'lunes a viernes',
+  };
 })();

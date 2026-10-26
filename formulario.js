@@ -27,12 +27,8 @@ function pintarTextos() {
   $('#titulo').innerHTML = esc(palabras.join(' ')) + ' <em>' + esc(ultima) + '</em>';
   $('#bajada').textContent = CONFIG.bajada;
   $$('#rotulo-area, #rotulo-area-2, #rotulo-area-3').forEach(e => e.textContent = CONFIG.area);
-  $$('#txt-rango, #txt-rango-2, #txt-rango-3').forEach(e => e.textContent = Semana.rango());
-  $$('#txt-aviso, #txt-aviso-3').forEach(e => e.textContent = CONFIG.fechas.aviso);
   $('#txt-minimo').textContent = CONFIG.horasMinimas;
   $('#txt-incentivo').textContent = CONFIG.incentivo;
-  $('#txt-cierre').textContent = CONFIG.fechas.cierreRegistro;
-  $('#txt-aviso-2').textContent = CONFIG.fechas.aviso;
   if (CONFIG.contacto.avisoPrivacidad) {
     $('#liga-aviso').innerHTML = 'Aviso de privacidad integral: <a href="' + CONFIG.contacto.avisoPrivacidad + '" target="_blank" rel="noopener">' + CONFIG.contacto.avisoPrivacidad.replace(/^https?:\/\//, '') + '</a>';
   }
@@ -240,7 +236,7 @@ function pintarRejilla() {
   Semana.dias.forEach(d => {
     const c = document.createElement('div');
     c.className = 'cabeza'; c.dataset.dia = d.iso;
-    c.innerHTML = d.corto + '<b>' + d.num + '</b>';
+    c.innerHTML = Semana.cabeza(d);
     c.setAttribute('role', 'button'); c.tabIndex = 0;
     c.title = 'Marcar o quitar todo el ' + d.dia;
     frag.append(c);
@@ -251,7 +247,7 @@ function pintarRejilla() {
       const c = document.createElement('div');
       c.className = 'celda'; c.dataset.clave = Semana.clave(d.iso, h);
       c.setAttribute('role', 'checkbox'); c.setAttribute('aria-checked', 'false'); c.tabIndex = 0;
-      c.setAttribute('aria-label', d.dia + ' ' + d.num + ', ' + Semana.hh(h));
+      c.setAttribute('aria-label', Semana.nombre(d) + ', ' + Semana.hh(h));
       frag.append(c);
     });
   });
@@ -385,7 +381,7 @@ async function avisar(r) {
   try {
     const porDia = {};
     r.disponibilidad.forEach(k => { const [iso] = k.split('|'); porDia[iso] = (porDia[iso] || 0) + 1; });
-    const dias = Semana.dias.filter(d => porDia[d.iso]).map(d => d.corto + ' ' + d.num + ' (' + porDia[d.iso] + ' h)').join(', ');
+    const dias = Semana.dias.filter(d => porDia[d.iso]).map(d => Semana.breve(d) + ' (' + porDia[d.iso] + ' h)').join(', ');
     const fila = (k, v) => '<tr><td style="padding:4px 12px 4px 0;color:#655C54">' + k + '</td><td style="padding:4px 0"><b>' + esc(v) + '</b></td></tr>';
     const html =
       '<div style="font-family:Segoe UI,Arial,sans-serif;font-size:15px;color:#191713">' +

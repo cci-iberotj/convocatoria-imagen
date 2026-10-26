@@ -84,7 +84,7 @@ const CONFIG = {
   },
 
   /* La cinta roja que corre debajo de la portada. */
-  cinta: ['Sesiones del 26 al 30 de octubre', 'Todas las carreras', 'Son tres minutos', 'Te llevas tus fotos'],
+  cinta: ['Próximas sesiones', 'Todas las carreras', 'Son tres minutos', 'Te llevas tus fotos'],
 
   /* El aviso de ropa. Sale grande en la página y se repite al final. */
   ropa: {
@@ -112,11 +112,10 @@ const CONFIG = {
   },
 
   /* ── La rejilla de disponibilidad ──────────────────────
-     Cinco días a partir del lunes 26 de octubre de 2026.
-     Bloques de una hora de horaInicio a horaFin (8 → 18 son diez
-     bloques: 8:00-9:00 … 17:00-18:00). */
+     Semana tipo, sin fechas (desde el 26-oct-2026: el registro queda
+     abierto para futuras sesiones). Lunes a viernes, bloques de una
+     hora de horaInicio a horaFin (8 → 18 son diez bloques). */
   semana: {
-    inicio:     '2026-10-26',   // lunes
     dias:       5,
     horaInicio: 8,
     horaFin:    18,
@@ -247,5 +246,5 @@ Gracias por sumarte y por querer ser parte de la imagen de nuestra comunidad.`,
   /* Estados que el equipo le pone a cada registro. */
   estados: ['nueva', 'convocada', 'descartada'],
 
-  version: '1.22',
+  version: '1.23',
 };

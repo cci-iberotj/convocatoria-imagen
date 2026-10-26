@@ -67,6 +67,8 @@ $('#btn-salir').addEventListener('click', () => { Almacen.salir(); location.relo
 async function cargar() {
   try {
     todos = await Almacen.listar();
+    /* Las horas de los registros viejos venían con fecha: se pasan a día de la semana. */
+    todos.forEach(r => { r.disponibilidad = (r.disponibilidad || []).map(Semana.normalizar); });
   } catch (e) {
     if (e.message === 'SIN_SESION') { $('#tablero').classList.add('oculto'); $('#entrada').classList.remove('oculto'); return; }
     alert('No se pudieron leer las respuestas: ' + e.message);
@@ -90,15 +92,14 @@ function filtrados() {
 
 /* ── Sesiones ───────────────────────────────────────────── */
 function sesionTitulo(s) {
-  const d = Semana.dias.find(x => x.iso === s.dia);
-  return (d ? d.dia + ' ' + d.num : s.dia) + ' · ' + s.hora + ' · ' + s.nombre;
+  return fechaLarga(s.dia) + ' · ' + s.hora + ' · ' + s.nombre;
 }
 /* Horas de la sesión (desde la cadena '12:00–14:00') que el alumno marcó. */
 function horasEn(r, s) {
   const [a, b] = s.hora.split('–').map(x => parseInt(x, 10));
   const disp = new Set(r.disponibilidad || []);
   const puede = [];
-  for (let h = a; h < b; h++) if (disp.has(Semana.clave(s.dia, h))) puede.push(h);
+  for (let h = a; h < b; h++) if (disp.has(Semana.clave(Semana.diaDeFecha(s.dia), h))) puede.push(h);
   return { total: b - a, puede };
 }
 /* ── WhatsApp ───────────────────────────────────────────── */
@@ -264,7 +265,7 @@ function pintarSesiones() {
       return `<option value="${esc(r.folio)}">${marca} ${esc(r.nombre)} · ${esc(r.carrera)}${r.sesion ? ' (ya en otra sesión)' : ''}</option>`;
     }).join('');
     return `<div class="sesion" data-sesion="${esc(s.id)}">
-      <div class="cuando"><b>${d ? d.dia + ' ' + d.num : esc(s.dia)}</b><span>${esc(s.hora)}</span><span>${esc(s.nombre)}</span><span>· ${gente.length}</span></div>
+      <div class="cuando"><b>${esc(fechaLarga(s.dia))}</b><span>${esc(s.hora)}</span><span>${esc(s.nombre)}</span><span>· ${gente.length}</span></div>
       <div class="quienes">${filas || '<div class="vacia">Nadie todavía.</div>'}</div>
       <div class="agregar"><select data-agregar="${esc(s.id)}"><option value="">Agregar a alguien… (✓ puede todas las horas, ~ algunas)</option>${opciones}</select></div>
     </div>`;
@@ -350,13 +351,13 @@ function pintarCarreras() {
   caja.innerHTML = orden.map(c => {
     const n = cuenta[c] || 0;
     const pct = Math.round(100 * n / total);
-    return `<button type="button" class="barra${n ? '' : ' cero'}${filtroCarrera === c ? ' activo' : ''}" data-carrera="${esc(c)}" style="--tono:${colorDe(c)}" title="${esc(c)}: ${n} (${pct}%)">
+    return `<button type="button" class="fila-carrera${n ? '' : ' cero'}${filtroCarrera === c ? ' activo' : ''}" data-carrera="${esc(c)}" style="--tono:${colorDe(c)}" title="${esc(c)}: ${n} (${pct}%)">
       <span class="nombre"><i></i>${esc(c)}</span>
       <span class="pista"><b style="width:${Math.round(100 * n / max)}%"></b></span>
       <span class="n">${n} <small>${n ? pct + '%' : ''}</small></span>
     </button>`;
   }).join('');
-  $$('#carreras .barra').forEach(b => b.addEventListener('click', () => {
+  $$('#carreras .fila-carrera').forEach(b => b.addEventListener('click', () => {
     filtroCarrera = filtroCarrera === b.dataset.carrera ? '' : b.dataset.carrera;
     pintarTodo();
   }));
@@ -389,7 +390,7 @@ function pintarMejores() {
   $('#mejores').innerHTML = lista.map(([k, n]) => {
     const [iso, hh] = k.split('|');
     const d = Semana.dias.find(x => x.iso === iso);
-    return `<li data-bloque="${k}"><b>${n}</b> <span>personas ·</span> ${d.dia} ${d.num}, ${hh}:00–${String(Number(hh) + 1).padStart(2, '0')}:00</li>`;
+    return `<li data-bloque="${k}"><b>${n}</b> <span>personas ·</span> ${Semana.nombre(d)}, ${hh}:00–${String(Number(hh) + 1).padStart(2, '0')}:00</li>`;
   }).join('') || '<li class="meta">Todavía no hay disponibilidad registrada.</li>';
   $$('#mejores li[data-bloque]').forEach(li => li.addEventListener('click', () => {
     bloqueElegido = bloqueElegido === li.dataset.bloque ? null : li.dataset.bloque;
@@ -422,7 +423,7 @@ function pintarCalor() {
   const frag = document.createDocumentFragment();
   frag.append(Object.assign(document.createElement('div'), { className: 'hora' }));
   Semana.dias.forEach(d => {
-    const e = document.createElement('div'); e.className = 'cabeza'; e.innerHTML = d.corto + '<b>' + d.num + '</b>'; frag.append(e);
+    const e = document.createElement('div'); e.className = 'cabeza'; e.innerHTML = Semana.cabeza(d); frag.append(e);
   });
   Semana.horas.forEach(h => {
     const eh = document.createElement('div'); eh.className = 'hora'; eh.textContent = Semana.hh(h); frag.append(eh);
@@ -433,7 +434,7 @@ function pintarCalor() {
       const [fondo, texto] = tono(n, max);
       e.style.background = fondo; e.style.color = texto;
       e.textContent = n || '';
-      e.title = n + (n === 1 ? ' persona' : ' personas') + ' · ' + d.dia + ' ' + d.num + ', ' + Semana.hh(h);
+      e.title = n + (n === 1 ? ' persona' : ' personas') + ' · ' + Semana.nombre(d) + ', ' + Semana.hh(h);
       e.addEventListener('click', () => { bloqueElegido = bloqueElegido === k ? null : k; pintarTodo(); });
       frag.append(e);
     });
@@ -443,7 +444,7 @@ function pintarCalor() {
   if (bloqueElegido) {
     const [iso, hh] = bloqueElegido.split('|');
     const d = Semana.dias.find(x => x.iso === iso);
-    f.innerHTML = 'Viendo: <b>' + d.corto + ' ' + d.num + ' · ' + hh + ':00</b> <button class="btn suave chico" id="quitar-bloque">quitar</button>';
+    f.innerHTML = 'Viendo: <b>' + Semana.nombre(d) + ' · ' + hh + ':00</b> <button class="btn suave chico" id="quitar-bloque">quitar</button>';
     $('#quitar-bloque').addEventListener('click', () => { bloqueElegido = null; pintarTodo(); });
   } else f.textContent = '';
 }
@@ -468,7 +469,7 @@ function pintarLista() {
     const disp = new Set(r.disponibilidad || []);
     const dias = Semana.dias.map(d => {
       const n = Semana.horas.filter(h => disp.has(Semana.clave(d.iso, h))).length;
-      return `<i class="${n ? 'si' : ''}" title="${d.dia} ${d.num}: ${n} h">${d.corto === 'mié' ? 'X' : d.corto[0].toUpperCase()}</i>`;
+      return `<i class="${n ? 'si' : ''}" title="${Semana.nombre(d)}: ${n} h">${d.corto === 'mié' ? 'X' : d.corto[0].toUpperCase()}</i>`;
     }).join('');
     return `
     <button class="ficha-mini" data-folio="${esc(r.folio)}" style="--tono:${colorDe(r.carrera)}">
@@ -505,7 +506,7 @@ function abrirFicha(folio) {
   $('#ficha-horas').textContent = '· ' + disp.size + ' horas';
   const mini = $('#ficha-mini');
   mini.style.setProperty('--dias', Semana.dias.length);
-  let h = '<div class="hora"></div>' + Semana.dias.map(d => '<div class="cabeza">' + d.corto + ' ' + d.num + '</div>').join('');
+  let h = '<div class="hora"></div>' + Semana.dias.map(d => '<div class="cabeza">' + Semana.breve(d) + '</div>').join('');
   Semana.horas.forEach(hora => {
     h += '<div class="hora">' + Semana.hh(hora) + '</div>';
     h += Semana.dias.map(d => '<div class="c' + (disp.has(Semana.clave(d.iso, hora)) ? ' si' : '') + '"></div>').join('');
@@ -575,7 +576,7 @@ function fecha(iso) {
 $('#btn-csv').addEventListener('click', () => {
   const vistos = filtrados();
   const bloques = [];
-  Semana.dias.forEach(d => Semana.horas.forEach(h => bloques.push({ k: Semana.clave(d.iso, h), t: d.corto + ' ' + d.num + ' ' + Semana.hh(h) })));
+  Semana.dias.forEach(d => Semana.horas.forEach(h => bloques.push({ k: Semana.clave(d.iso, h), t: Semana.breve(d) + ' ' + Semana.hh(h) })));
   const cab = ['folio', 'nombre', 'carrera', 'semestre', 'genero', 'correo', 'telefono',
                'estado', 'sesion', 'nota', 'horas', 'registrado', ...bloques.map(b => b.t)];
   const filas = vistos.map(r => {
