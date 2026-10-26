@@ -139,7 +139,8 @@ function mensajeDe(r) {
       .replaceAll('{nombre}', primerNombre(r))
       .replaceAll('{fecha}', fechaLarga(s.dia))
       .replaceAll('{horario}', horarioDe(r, s))
-      .replaceAll('{lugar}', s.lugar || 'te lo confirmamos por aquí');
+      .replaceAll('{lugar}', s.lugar || 'te lo confirmamos por aquí')
+      .replaceAll('{ropa}', s.ropa || CONFIG.mensajes.ropa || '');
   }
   /* No convocado: si su carrera ni siquiera tiene sesión todavía, el
      mensaje lo dice así; si sí tiene y no coincidió, el de horario. */
@@ -203,6 +204,16 @@ function mandarCorreo(folio) {
   pintarTodo();
   if (abierto === folio) pintarWAFicha(r);
 }
+/* Recado de la sesión (p. ej. una corrección): sólo abre WhatsApp con el
+   texto; no cambia la marca de avisado. */
+function mandarRecado(folio) {
+  const r = todos.find(x => x.folio === folio);
+  const s = r && (CONFIG.sesiones || []).find(x => x.id === r.sesion);
+  if (!s || !s.recado) return;
+  const texto = s.recado.replaceAll('{nombre}', primerNombre(r)).replaceAll('{fecha}', fechaLarga(s.dia).toLowerCase())
+    .replaceAll('{horario}', horarioDe(r, s)).replaceAll('{lugar}', s.lugar || 'el lugar que te confirmamos');
+  window.open('https://api.whatsapp.com/send?phone=' + numeroWA(r.telefono) + '&text=' + encodeURIComponent(texto), '_blank', 'noopener');
+}
 function aviso(texto) {
   let t = $('#aviso-flotante');
   if (!t) { t = document.createElement('div'); t.id = 'aviso-flotante'; document.body.append(t); }
@@ -227,6 +238,7 @@ function conectarWA(raiz) {
   const parar = (b, fn) => b.addEventListener('click', ev => { ev.stopPropagation(); fn(); });
   $$('[data-wa]', raiz).forEach(b => parar(b, () => mandarWA(b.dataset.wa)));
   $$('[data-correo]', raiz).forEach(b => parar(b, () => mandarCorreo(b.dataset.correo)));
+  $$('[data-recado]', raiz).forEach(b => parar(b, () => mandarRecado(b.dataset.recado)));
   $$('[data-wa-si]', raiz).forEach(b => parar(b, () => marcarAvisado(b.dataset.waSi, true)));
   $$('[data-wa-no]', raiz).forEach(b => parar(b, () => { porConfirmar.delete(b.dataset.waNo); pintarTodo(); const r = todos.find(x => x.folio === b.dataset.waNo); if (r && abierto === r.folio) pintarWAFicha(r); }));
   $$('[data-wa-quitar]', raiz).forEach(b => parar(b, () => marcarAvisado(b.dataset.waQuitar, false)));
@@ -256,6 +268,7 @@ function pintarSesiones() {
         ${r.foto ? `<img src="${r.foto}" alt="">` : `<div class="sinfoto">${esc((r.nombre || '?')[0])}</div>`}
         <div class="quien"><b>${esc(r.nombre)}</b><small>${esc(r.carrera)} · ${texto}</small></div>
         ${botonWA(r)}
+        ${s.recado && avisadoAhora(r) && !porConfirmar.has(r.folio) ? `<button type="button" class="wa recado" data-recado="${esc(r.folio)}" title="Ya fue avisado. Mandar por WhatsApp el recado de esta sesión (corrección de ropa: uniforme)">💬</button>` : '<span></span>'}
         <button type="button" class="quitar" data-quitar="${esc(r.folio)}" title="Quitar de esta sesión">×</button>
       </div>`;
     }).join('');

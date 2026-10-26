@@ -180,7 +180,17 @@ const CONFIG = {
      se puede meter a cualquiera). Si cambia el plan, se cambia aquí. */
   sesiones: [
     { id: 'mar-com', dia: '2026-10-27', hora: '14:00–17:00', lugar: 'Salones del 4.º piso', nombre: 'Comunicación y Derecho',     carreras: ['Comunicación', 'Derecho'] },
-    { id: 'mie-med', dia: '2026-10-28', hora: '12:00–14:00', lugar: 'CESICQ (Centro de Simulación Clínica y Quirúrgica)', nombre: 'Medicina y Enfermería',      carreras: ['Medicina', 'Enfermería'] },
+    { id: 'mie-med', dia: '2026-10-28', hora: '12:00–14:00', lugar: 'CESICQ (Centro de Simulación Clínica y Quirúrgica)', nombre: 'Medicina y Enfermería',      carreras: ['Medicina', 'Enfermería'],
+      ropa: '👕 Un detalle para ese día: ven con tu uniforme de prácticas y, si tienes, súmale un detalle rojo, como un suéter o una chamarra.',
+      /* Recado: un segundo mensaje para quien ya fue avisado (botón 💬).
+         Éste corrige la ropa, porque el primer aviso pedía ropa clara. */
+      recado: `¡Hola, {nombre}! 👋
+
+Una precisión sobre tu sesión del {fecha}, de {horario}, en {lugar}:
+
+👕 Para Medicina y Enfermería, ven con tu uniforme de prácticas en lugar de la ropa clara que te mencionamos. Si tienes, súmale un detalle rojo, como un suéter o una chamarra.
+
+¡Gracias y nos vemos pronto! ✨` },
     { id: 'vie-ing', dia: '2026-10-30', hora: '12:00–15:00', lugar: 'Salones del 4.º piso', nombre: 'Ingenierías y Arquitectura', carreras: ['Arquitectura', 'Ingeniería en Mecatrónica', 'Ingeniería Industrial en Manufactura Inteligente'] },
   ],
 
@@ -192,8 +202,12 @@ const CONFIG = {
        {fecha}    «Lunes 26 de octubre»
        {horario}  sus horas dentro de la sesión (si es escalonada, las suyas)
        {lugar}    el lugar de la sesión (arriba, en sesiones → lugar);
-                  vacío = «te lo confirmamos por aquí»  */
+                  vacío = «te lo confirmamos por aquí»
+       {ropa}     qué traer puesto: sesiones → ropa, o si no, mensajes → ropa  */
   mensajes: {
+    /* La indicación de ropa que va en {ropa}. Una sesión puede traer la
+       suya (sesiones → ropa); si no, va ésta. */
+    ropa: '👕 Un detalle para ese día: ven con ropa en tonos claros (blanco, beige o gris claro) y súmale algo rojo, como un suéter, una gorra o una chamarra. De preferencia sin logotipos de otras marcas.',
     /* Asuntos del correo (el botón ✉ usa el mismo texto que WhatsApp). */
     asuntoConvocado:   'Tu sesión de fotos y video · IBERO Tijuana',
     asuntoNoConvocado: 'Convocatoria «Sé parte de la imagen de IBERO Tijuana»',
@@ -209,7 +223,7 @@ Para esta primera sesión, logramos hacer coincidir tu disponibilidad con uno de
 🕐 Horario: {horario}
 📍 Lugar: {lugar}
 
-👕 Un detalle para ese día: ven con ropa en tonos claros (blanco, beige o gris claro) y súmale algo rojo, como un suéter, una gorra o una chamarra. De preferencia sin logotipos de otras marcas.
+{ropa}
 
 Gracias por sumarte y por ayudarnos a mostrar a la comunidad que hace IBERO todos los días. ✨
 
@@ -246,5 +260,5 @@ Gracias por sumarte y por querer ser parte de la imagen de nuestra comunidad.`,
   /* Estados que el equipo le pone a cada registro. */
   estados: ['nueva', 'convocada', 'descartada'],
 
-  version: '1.23',
+  version: '1.24',
 };

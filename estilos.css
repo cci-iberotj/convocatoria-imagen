@@ -301,7 +301,9 @@ footer.pie a { color: inherit; }
 .wa-confirma .wa { padding: 3px 9px; }
 .wa-confirma .wa.si { background: var(--ok); color: #fff; border-color: var(--ok); }
 .wa-confirma .wa.no { color: var(--tinta-tenue); border-color: var(--linea-control); }
-.sesion .persona { grid-template-columns: 30px 1fr auto auto auto; }
+.sesion .persona { grid-template-columns: 30px 1fr auto auto auto auto; }
+.wa.recado { border-color: var(--alerta); color: var(--alerta); padding: 3px 7px; font-size: 13px; }
+.wa.recado:hover { background: var(--alerta-velo); }
 .wa.correo { border-color: var(--info); color: var(--info); padding: 4px 8px; }
 .wa.correo:hover { background: var(--info-velo); }
 #aviso-flotante { position: fixed; left: 50%; bottom: 20px; transform: translate(-50%, 140%); max-width: min(92vw, 560px);
