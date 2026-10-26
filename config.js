@@ -194,6 +194,21 @@ Una precisión sobre tu sesión del {fecha}, de {horario}, en {lugar}:
     { id: 'vie-ing', dia: '2026-10-30', hora: '12:00–15:00', lugar: 'Salones del 4.º piso', nombre: 'Ingenierías y Arquitectura', carreras: ['Arquitectura', 'Ingeniería en Mecatrónica', 'Ingeniería Industrial en Manufactura Inteligente'] },
   ],
 
+  /* ── Contactos para el celular (botón «Contactos») ──────
+     Arma un archivo .vcf con los alumnos para importarlos todos de una
+     vez. El nombre del contacto lleva, si se elige, la carrera y la
+     sesión: «Christian Morán · Comunicación · Mar 27». */
+  contactos: {
+    grupo: 'Casting IBERO',    // va como empresa y etiqueta del contacto
+    /* Carreras largas, recortadas para que quepan en el nombre. */
+    carrerasCortas: {
+      'Ingeniería en Mecatrónica': 'Ing. Mecatrónica',
+      'Ingeniería Industrial en Manufactura Inteligente': 'Ing. Industrial',
+      'Administración de Negocios Internacionales': 'Negocios Int.',
+      'Administración de Empresas': 'Adm. Empresas',
+    },
+  },
+
   /* ── Mensajes por WhatsApp ──────────────────────────────
      Los redactó Marysol (23-oct-2026). El botón de cada alumno abre
      WhatsApp con el que le toca ya escrito; se puede retocar antes de
@@ -260,5 +275,5 @@ Gracias por sumarte y por querer ser parte de la imagen de nuestra comunidad.`,
   /* Estados que el equipo le pone a cada registro. */
   estados: ['nueva', 'convocada', 'descartada'],
 
-  version: '1.24',
+  version: '1.25',
 };

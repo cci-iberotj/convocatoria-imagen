@@ -507,3 +507,27 @@ body.alegre .intro { margin-top: 6px; color: var(--tinta-media); }
   letter-spacing: .04em; text-transform: uppercase; padding: 9px 12px; border-radius: 8px;
   box-shadow: var(--sombra);
 }
+
+/* ── Contactos para el celular ─────────────────────────── */
+.contactos { max-width: 560px; }
+.contactos h2 { margin: 0 44px 4px 0; }
+.ct-intro { margin: 0; color: var(--tinta-media); font-size: 14.5px; }
+.ct-opciones { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; }
+.ct-opciones .casilla { padding: 10px 12px; font-size: 14px; margin-top: 10px; }
+.ct-opciones .casilla em { font-style: normal; color: var(--tinta-tenue); font-size: 12.5px; }
+.ct-muestra { margin-top: 16px; }
+.ct-muestra small { display: block; font-size: 12.5px; font-weight: 700; color: var(--tinta-tenue); text-transform: uppercase; letter-spacing: .04em; }
+#ct-lista { list-style: none; margin: 8px 0 0; padding: 4px; max-height: 240px; overflow: auto;
+  border: 1px solid var(--linea-sutil); border-radius: var(--radio); background: var(--capa-1); }
+#ct-lista li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; padding: 6px 8px; }
+#ct-lista li + li { border-top: 1px solid var(--linea-sutil); }
+#ct-lista img, #ct-lista i { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; display: grid; place-items: center;
+  background: var(--capa-hundida); font-style: normal; font-weight: 700; color: var(--tinta-media); }
+#ct-lista b { display: block; font-size: 14px; }
+#ct-lista span small { font-size: 12px; color: var(--tinta-tenue); text-transform: none; letter-spacing: 0; font-weight: 400; }
+.ct-como { margin-top: 14px; font-size: 14px; color: var(--tinta-media); }
+.ct-como summary { cursor: pointer; font-weight: 700; color: var(--marca-tinta); }
+.ct-como ol { margin: 8px 0 0; padding-left: 20px; }
+.ct-como li { margin-top: 4px; }
+.ct-como p { margin: 8px 0 0; }
+@media (max-width: 520px) { .ct-opciones { grid-template-columns: 1fr; } }

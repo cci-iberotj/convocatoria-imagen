@@ -606,6 +606,108 @@ $('#btn-csv').addEventListener('click', () => {
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 });
 
+/* ── Contactos para el celular (.vcf, vCard 3.0) ────────── */
+const MINUSCULAS = new Set(['de', 'del', 'la', 'las', 'los', 'y']);
+function nombrePropio(n) {
+  return String(n || '').trim().split(/\s+/).map((p, i) => {
+    const b = p.toLowerCase();
+    return i && MINUSCULAS.has(b) ? b : b.charAt(0).toUpperCase() + b.slice(1);
+  }).join(' ');
+}
+/* «Christian Gael Morán Landín» → «Christian Morán». Con cuatro palabras o
+   más, el primer apellido es la penúltima; con tres, la segunda. */
+function nombreCorto(n) {
+  const p = nombrePropio(n).split(' ').filter(x => !MINUSCULAS.has(x.toLowerCase()));
+  if (p.length >= 4) return p[0] + ' ' + p[p.length - 2];
+  if (p.length === 3) return p[0] + ' ' + p[1];
+  return p.join(' ');
+}
+function sesionCorta(s) {
+  const [y, m, d] = s.dia.split('-').map(Number);
+  return ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'][new Date(y, m - 1, d).getDay()] + ' ' + d;
+}
+function opcionesContactos() {
+  return { quienes: $('#ct-quienes').value, corto: $('#ct-corto').checked, carrera: $('#ct-carrera').checked,
+           sesion: $('#ct-sesion').checked, foto: $('#ct-foto').checked };
+}
+function genteContactos(o) {
+  const vivos = todos.filter(r => r.estado !== 'descartada');
+  if (o.quienes === 'convocados') return vivos.filter(r => r.sesion);
+  if (o.quienes === 'lista') return filtrados();
+  if (o.quienes === 'no-convocados') return vivos.filter(r => !r.sesion);
+  return vivos.filter(r => r.sesion === o.quienes.slice(2));   // 's:mar-com'
+}
+function nombreContacto(r, o) {
+  const s = (CONFIG.sesiones || []).find(x => x.id === r.sesion);
+  const cortas = (CONFIG.contactos || {}).carrerasCortas || {};
+  return [o.corto ? nombreCorto(r.nombre) : nombrePropio(r.nombre),
+          o.carrera ? (cortas[r.carrera] || r.carrera) : '',
+          o.sesion && s ? sesionCorta(s) : ''].filter(Boolean).join(' · ');
+}
+function vcard(r, o) {
+  const s = (CONFIG.sesiones || []).find(x => x.id === r.sesion);
+  const grupo = (CONFIG.contactos || {}).grupo || 'Casting IBERO';
+  const txt = v => String(v == null ? '' : v).replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/([,;])/g, '\\$1');
+  const nombre = nombreContacto(r, o);
+  const nota = [nombrePropio(r.nombre), r.carrera + ' · ' + semestreTexto(r.semestre),
+                s ? 'Sesión: ' + fechaLarga(s.dia) + ', ' + horarioDe(r, s) + ', ' + (s.lugar || '') : 'Sin sesión asignada',
+                r.nota || ''].filter(Boolean).join('\n');
+  const lineas = ['BEGIN:VCARD', 'VERSION:3.0',
+    'N:;' + txt(nombre) + ';;;', 'FN:' + txt(nombre), 'ORG:' + txt(grupo), 'TITLE:' + txt(r.carrera),
+    'TEL;TYPE=CELL:+' + numeroWA(r.telefono)];
+  if (r.correo) lineas.push('EMAIL;TYPE=INTERNET:' + txt(r.correo));
+  lineas.push('NOTE:' + txt(nota), 'CATEGORIES:' + txt(grupo), 'UID:casting-' + txt(r.folio));
+  const foto = o.foto && /^data:image\/(\w+);base64,(.+)$/.exec(r.foto || '');
+  if (foto) lineas.push('PHOTO;ENCODING=b;TYPE=' + (foto[1] === 'png' ? 'PNG' : 'JPEG') + ':' + foto[2]);
+  lineas.push('END:VCARD');
+  /* Renglones de más de 75 caracteres se doblan: salto + espacio. */
+  return lineas.map(l => {
+    const c = Array.from(l), partes = [];
+    for (let i = 0; i < c.length;) {
+      let n = Math.min(74, c.length - i);
+      if (c[i + n - 1] === '\\' && i + n < c.length) n--;   // no partir «\,» ni «\n»
+      partes.push(c.slice(i, i + n).join('')); i += n;
+    }
+    return partes.join('\r\n ');
+  }).join('\r\n');
+}
+function pintarContactos() {
+  const o = opcionesContactos(), gente = genteContactos(o);
+  $('#ct-cuenta').textContent = gente.length ? 'Así quedan · ' + gente.length + (gente.length === 1 ? ' contacto' : ' contactos') : 'Nadie en este grupo.';
+  $('#ct-lista').innerHTML = gente.map(r => `<li>${r.foto && o.foto ? `<img src="${r.foto}" alt="">` : `<i>${esc((r.nombre || '?')[0])}</i>`}<span><b>${esc(nombreContacto(r, o))}</b><small>+${esc(numeroWA(r.telefono))}</small></span></li>`).join('');
+  $('#ct-descargar').disabled = !gente.length;
+}
+function abrirContactos() {
+  const sel = $('#ct-quienes'), antes = sel.value;
+  const vivos = todos.filter(r => r.estado !== 'descartada');
+  const cuenta = f => ' (' + vivos.filter(f).length + ')';
+  sel.innerHTML = `<option value="convocados">Convocados de todas las sesiones${cuenta(r => r.sesion)}</option>`
+    + (CONFIG.sesiones || []).map(s => `<option value="s:${esc(s.id)}">${esc(sesionTitulo(s))}${cuenta(r => r.sesion === s.id)}</option>`).join('')
+    + `<option value="no-convocados">No convocados${cuenta(r => !r.sesion)}</option>`
+    + `<option value="lista">Lo que muestra la lista de fichas (${filtrados().length})</option>`;
+  if (antes && [...sel.options].some(x => x.value === antes)) sel.value = antes;
+  pintarContactos();
+  $('#velo-contactos').classList.remove('oculto');
+}
+function cerrarContactos() { $('#velo-contactos').classList.add('oculto'); }
+$('#btn-contactos').addEventListener('click', abrirContactos);
+$('#ct-cerrar').addEventListener('click', cerrarContactos);
+$('#velo-contactos').addEventListener('click', ev => { if (ev.target === $('#velo-contactos')) cerrarContactos(); });
+document.addEventListener('keydown', ev => { if (ev.key === 'Escape') cerrarContactos(); });
+['#ct-quienes', '#ct-corto', '#ct-carrera', '#ct-sesion', '#ct-foto'].forEach(id => $(id).addEventListener('change', pintarContactos));
+$('#ct-descargar').addEventListener('click', () => {
+  const o = opcionesContactos(), gente = genteContactos(o);
+  if (!gente.length) return;
+  const vcf = gente.map(r => vcard(r, o)).join('\r\n') + '\r\n';
+  const nombre = o.quienes.startsWith('s:') ? o.quienes.slice(2) : o.quienes;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([vcf], { type: 'text/vcard;charset=utf-8' }));
+  a.download = 'contactos-casting-' + nombre + '-' + new Date().toISOString().slice(0, 10) + '.vcf';
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  aviso('Se descargaron ' + gente.length + ' contactos. Mándate el archivo por correo y ábrelo en el celular.');
+});
+
 /* ── Datos de muestra (sólo modo local) ─────────────────── */
 $('#btn-muestra').addEventListener('click', async () => {
   if (todos.length && !confirm('Ya hay ' + todos.length + ' registros en este navegador. ¿Borrarlos y cargar la muestra?')) return;
