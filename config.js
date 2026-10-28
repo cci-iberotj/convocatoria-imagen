@@ -280,5 +280,5 @@ Gracias por sumarte y por querer ser parte de la imagen de nuestra comunidad.`,
   /* Estados que el equipo le pone a cada registro. */
   estados: ['nueva', 'convocada', 'descartada'],
 
-  version: '1.26',
+  version: '1.27',
 };

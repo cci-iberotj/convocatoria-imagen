@@ -52,6 +52,9 @@ const Almacen = (() => {
     async listar() {
       return this._leer().sort((a, b) => (b.creado || '').localeCompare(a.creado || ''));
     },
+    async fotos() {
+      return this._leer().map(r => ({ folio: r.folio, foto: r.foto }));
+    },
     async actualizar(folio, cambios) {
       const lista = this._leer();
       const r = lista.find(x => x.folio === folio);
@@ -151,8 +154,15 @@ const Almacen = (() => {
       }, false);
       return r;
     },
-    async listar() {
-      return await this._rest(this._tabla + '?select=*&order=creado.desc') || [];
+    /* Sin fotos va en un instante; las fotos (varios MB) se piden aparte. */
+    async listar(opciones = {}) {
+      const campos = opciones.sinFotos
+        ? 'folio,nombre,matricula,carrera,semestre,correo,telefono,instagram,disponibilidad,consentimientos,estado,nota,atendido_por,creado,genero,sesion,avisado'
+        : '*';
+      return await this._rest(this._tabla + '?select=' + campos + '&order=creado.desc') || [];
+    },
+    async fotos() {
+      return await this._rest(this._tabla + '?select=folio,foto') || [];
     },
     async actualizar(folio, cambios) {
       const d = await this._rest(this._tabla + '?folio=eq.' + encodeURIComponent(folio), {
@@ -179,7 +189,8 @@ const Almacen = (() => {
   const motor = CONFIG.motor === 'supabase' ? nube : local;
   return Object.assign({ folio, modo: CONFIG.motor }, {
     guardar:    r => motor.guardar(r),
-    listar:     () => motor.listar(),
+    listar:     o => motor.listar(o),
+    fotos:      () => motor.fotos(),
     actualizar: (f, c) => motor.actualizar(f, c),
     borrar:     f => motor.borrar(f),
     entrar:     (c, k) => motor.entrar(c, k),

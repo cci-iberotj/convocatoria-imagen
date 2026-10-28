@@ -64,17 +64,47 @@ $('#form-entrar').addEventListener('submit', async ev => {
 $('#btn-salir').addEventListener('click', () => { Almacen.salir(); location.reload(); });
 
 /* ── Datos ──────────────────────────────────────────────── */
+/* Aviso de arriba: «Cargando…», o el error si algo falla (en vez de
+   quedarse en blanco sin decir nada). */
+function estadoCarga(texto, error) {
+  const e = $('#estado-carga');
+  if (!e) return;
+  e.textContent = texto || '';
+  e.classList.toggle('oculto', !texto);
+  e.classList.toggle('peligro', !!error);
+  e.classList.toggle('info', !error);
+}
+function pintarSeguro() {
+  try { pintarTodo(); return true; }
+  catch (e) {
+    console.error(e);
+    estadoCarga('Algo falló al mostrar las respuestas: ' + e.message + '. Toca «Actualizar»; si sigue, manda captura de este aviso.', true);
+    return false;
+  }
+}
+/* Primero los datos sin fotos (rápido) y se pinta; luego las fotos. */
 async function cargar() {
+  estadoCarga('Cargando respuestas…');
   try {
-    todos = await Almacen.listar();
+    todos = await Almacen.listar({ sinFotos: true });
     /* Las horas de los registros viejos venían con fecha: se pasan a día de la semana. */
     todos.forEach(r => { r.disponibilidad = (r.disponibilidad || []).map(Semana.normalizar); });
   } catch (e) {
-    if (e.message === 'SIN_SESION') { $('#tablero').classList.add('oculto'); $('#entrada').classList.remove('oculto'); return; }
-    alert('No se pudieron leer las respuestas: ' + e.message);
+    if (e.message === 'SIN_SESION') { estadoCarga(''); $('#tablero').classList.add('oculto'); $('#entrada').classList.remove('oculto'); return; }
+    estadoCarga('No se pudieron leer las respuestas: ' + e.message + '. Toca «Actualizar».', true);
     todos = [];
+    pintarSeguro();
+    return;
   }
-  pintarTodo();
+  if (!pintarSeguro()) return;
+  estadoCarga('Cargando fotos…');
+  try {
+    const fotos = new Map((await Almacen.fotos()).map(f => [f.folio, f.foto]));
+    todos.forEach(r => { if (fotos.has(r.folio)) r.foto = fotos.get(r.folio); });
+    if (pintarSeguro()) estadoCarga('');
+  } catch (e) {
+    estadoCarga('Las respuestas están completas, pero las fotos no cargaron: ' + e.message + '. Toca «Actualizar».', true);
+  }
 }
 $('#btn-recargar').addEventListener('click', cargar);
 
