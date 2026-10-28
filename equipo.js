@@ -204,15 +204,116 @@ function mandarCorreo(folio) {
   pintarTodo();
   if (abierto === folio) pintarWAFicha(r);
 }
-/* Recado de la sesión (p. ej. una corrección): sólo abre WhatsApp con el
-   texto; no cambia la marca de avisado. */
-function mandarRecado(folio) {
+/* ── Recordatorio ──────────────────────────────────────────
+   Se guarda en la misma columna «avisado», como cuarto dato:
+   'convocado|fecha del aviso|canal|fecha del recordatorio'. Igual que el
+   aviso, abrir WhatsApp no lo marca: hay que confirmar con «Sí». */
+const porRecordar = new Set();
+let colaRecordar = null;   // { sesion, folio } mientras se recorre una sesión
+function recordadoAhora(r) {
+  const p = String(r.avisado || '').split('|');
+  return r.sesion && p[0] === 'convocado' ? (p[3] || '') : '';
+}
+function cuandoEs(iso) {
+  const [y, m, d] = iso.split('-').map(Number);
+  const dias = Math.round((new Date(y, m - 1, d) - new Date(new Date().toDateString())) / 864e5);
+  return dias === 0 ? 'hoy' : dias === 1 ? 'mañana' : 'el ' + fechaLarga(iso).toLowerCase();
+}
+function mensajeRecordatorio(r) {
+  const s = (CONFIG.sesiones || []).find(x => x.id === r.sesion);
+  if (!s) return '';
+  const cuando = cuandoEs(s.dia);
+  const ropa = (s.ropa || CONFIG.mensajes.ropa || '')
+    .replace('para ese día', cuando === 'hoy' ? 'para hoy' : cuando === 'mañana' ? 'para mañana' : 'para ese día');
+  return CONFIG.mensajes.recordatorio
+    .replaceAll('{nombre}', primerNombre(r))
+    .replaceAll('{cuando}', cuando)
+    .replaceAll('{fecha}', fechaLarga(s.dia))
+    .replaceAll('{horario}', horarioDe(r, s))
+    .replaceAll('{lugar}', s.lugar || 'te lo confirmamos por aquí')
+    .replaceAll('{ropa}', ropa);
+}
+function abrirRecordatorio(r) {
+  window.open('https://api.whatsapp.com/send?phone=' + numeroWA(r.telefono) + '&text=' + encodeURIComponent(mensajeRecordatorio(r)), '_blank', 'noopener');
+  porRecordar.add(r.folio);
+}
+function mandarRecordatorio(folio) {
   const r = todos.find(x => x.folio === folio);
-  const s = r && (CONFIG.sesiones || []).find(x => x.id === r.sesion);
-  if (!s || !s.recado) return;
-  const texto = s.recado.replaceAll('{nombre}', primerNombre(r)).replaceAll('{fecha}', fechaLarga(s.dia).toLowerCase())
-    .replaceAll('{horario}', horarioDe(r, s)).replaceAll('{lugar}', s.lugar || 'el lugar que te confirmamos');
-  window.open('https://api.whatsapp.com/send?phone=' + numeroWA(r.telefono) + '&text=' + encodeURIComponent(texto), '_blank', 'noopener');
+  if (!r) return;
+  abrirRecordatorio(r);
+  pintarTodo();
+}
+async function marcarRecordado(folio, si) {
+  const r = todos.find(x => x.folio === folio);
+  porRecordar.delete(folio);
+  if (!r) return;
+  const p = String(r.avisado || '').split('|');
+  const ahora = new Date().toISOString();
+  /* Si nunca se le marcó el aviso, el recordatorio también lo cuenta como avisado. */
+  const cambios = { avisado: si
+    ? ['convocado', p[0] === 'convocado' && p[1] ? p[1] : ahora, p[0] === 'convocado' && p[2] ? p[2] : 'whatsapp', ahora].join('|')
+    : p.slice(0, 3).join('|') };
+  try {
+    await Almacen.actualizar(folio, cambios);
+    Object.assign(r, cambios);
+  } catch (e) { alert('No se guardó la marca: ' + e.message); }
+  pintarTodo();
+}
+function botonRecordar(r) {
+  if (colaRecordar && colaRecordar.folio === r.folio) {
+    return `<span class="wa-confirma" title="Contesta en la barra de abajo">🔔 …</span>`;
+  }
+  if (porRecordar.has(r.folio)) {
+    return `<span class="wa-confirma" title="¿Se envió el recordatorio?">🔔
+      <button type="button" class="wa si" data-rec-si="${esc(r.folio)}">Sí</button>
+      <button type="button" class="wa no" data-rec-no="${esc(r.folio)}">No</button></span>`;
+  }
+  const cuando = recordadoAhora(r);
+  return cuando
+    ? `<button type="button" class="wa recordar hecho" data-recordar="${esc(r.folio)}" title="Recordatorio enviado ${esc(fecha(cuando))}. Clic para abrirlo otra vez.">🔔✓</button>`
+    : `<button type="button" class="wa recordar" data-recordar="${esc(r.folio)}" title="Mandar el recordatorio de la sesión por WhatsApp">🔔</button>`;
+}
+/* «Recordar a todos»: abre al primero que falta; la barra de abajo pregunta
+   si se envió y, con «Sí, siguiente», lo marca y abre al que sigue. */
+function pendientesRecordar(sesionId) {
+  return todos.filter(r => r.sesion === sesionId && r.estado !== 'descartada' && !recordadoAhora(r))
+    .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+}
+function siguienteRecordar(sesionId, saltar) {
+  const pend = pendientesRecordar(sesionId).filter(r => !(saltar || []).includes(r.folio));
+  const r = pend[0];
+  if (!r) { colaRecordar = null; pintarTodo(); aviso('Listo: ya no queda nadie de esta sesión sin recordatorio.'); return; }
+  abrirRecordatorio(r);
+  colaRecordar = { sesion: sesionId, folio: r.folio, saltados: saltar || [] };
+  pintarTodo();
+}
+function pintarColaRecordar() {
+  let b = $('#cola-recordar');
+  if (!colaRecordar) { if (b) b.remove(); return; }
+  const s = (CONFIG.sesiones || []).find(x => x.id === colaRecordar.sesion);
+  const r = todos.find(x => x.folio === colaRecordar.folio);
+  if (!s || !r) { colaRecordar = null; if (b) b.remove(); return; }
+  const total = todos.filter(x => x.sesion === s.id && x.estado !== 'descartada').length;
+  const listos = total - pendientesRecordar(s.id).length;
+  if (!b) { b = document.createElement('div'); b.id = 'cola-recordar'; document.body.append(b); }
+  b.innerHTML = `<div><small>Recordatorio · ${esc(s.nombre)} · ${listos} de ${total}</small>
+      <b>¿Se le envió a ${esc(primerNombre(r))}?</b></div>
+    <button type="button" class="btn primario chico" data-cola="si">Sí, siguiente</button>
+    <button type="button" class="btn secundario chico" data-cola="no">No, saltar</button>
+    <button type="button" class="btn suave chico" data-cola="fin">Terminar</button>`;
+  b.querySelector('[data-cola="si"]').onclick = () => {
+    const c = colaRecordar;
+    marcarRecordado(c.folio, true);                  // se guarda mientras
+    siguienteRecordar(c.sesion, c.saltados.concat(c.folio));   // abre al siguiente ya
+  };
+  b.querySelector('[data-cola="no"]').onclick = () => {
+    const c = colaRecordar;
+    porRecordar.delete(c.folio);
+    siguienteRecordar(c.sesion, c.saltados.concat(c.folio));
+  };
+  b.querySelector('[data-cola="fin"]').onclick = () => {
+    porRecordar.delete(colaRecordar.folio); colaRecordar = null; pintarTodo();
+  };
 }
 function aviso(texto) {
   let t = $('#aviso-flotante');
@@ -238,7 +339,10 @@ function conectarWA(raiz) {
   const parar = (b, fn) => b.addEventListener('click', ev => { ev.stopPropagation(); fn(); });
   $$('[data-wa]', raiz).forEach(b => parar(b, () => mandarWA(b.dataset.wa)));
   $$('[data-correo]', raiz).forEach(b => parar(b, () => mandarCorreo(b.dataset.correo)));
-  $$('[data-recado]', raiz).forEach(b => parar(b, () => mandarRecado(b.dataset.recado)));
+  $$('[data-recordar]', raiz).forEach(b => parar(b, () => mandarRecordatorio(b.dataset.recordar)));
+  $$('[data-rec-si]', raiz).forEach(b => parar(b, () => marcarRecordado(b.dataset.recSi, true)));
+  $$('[data-rec-no]', raiz).forEach(b => parar(b, () => { porRecordar.delete(b.dataset.recNo); pintarTodo(); }));
+  $$('[data-recordar-todos]', raiz).forEach(b => parar(b, () => siguienteRecordar(b.dataset.recordarTodos)));
   $$('[data-wa-si]', raiz).forEach(b => parar(b, () => marcarAvisado(b.dataset.waSi, true)));
   $$('[data-wa-no]', raiz).forEach(b => parar(b, () => { porConfirmar.delete(b.dataset.waNo); pintarTodo(); const r = todos.find(x => x.folio === b.dataset.waNo); if (r && abierto === r.folio) pintarWAFicha(r); }));
   $$('[data-wa-quitar]', raiz).forEach(b => parar(b, () => marcarAvisado(b.dataset.waQuitar, false)));
@@ -268,7 +372,7 @@ function pintarSesiones() {
         ${r.foto ? `<img src="${r.foto}" alt="">` : `<div class="sinfoto">${esc((r.nombre || '?')[0])}</div>`}
         <div class="quien"><b>${esc(r.nombre)}</b><small>${esc(r.carrera)} · ${texto}</small></div>
         ${botonWA(r)}
-        ${s.recado && avisadoAhora(r) && !porConfirmar.has(r.folio) ? `<button type="button" class="wa recado" data-recado="${esc(r.folio)}" title="Ya fue avisado. Mandar por WhatsApp el recado de esta sesión (corrección de ropa: uniforme)">💬</button>` : '<span></span>'}
+        ${botonRecordar(r)}
         <button type="button" class="quitar" data-quitar="${esc(r.folio)}" title="Quitar de esta sesión">×</button>
       </div>`;
     }).join('');
@@ -279,6 +383,12 @@ function pintarSesiones() {
     }).join('');
     return `<div class="sesion" data-sesion="${esc(s.id)}">
       <div class="cuando"><b>${esc(fechaLarga(s.dia))}</b><span>${esc(s.hora)}</span><span>${esc(s.nombre)}</span><span>· ${gente.length}</span></div>
+      ${gente.length ? `<div class="recordar-todos">${(() => {
+        const vivos = gente.filter(r => r.estado !== 'descartada'), listos = vivos.filter(recordadoAhora).length;
+        return listos === vivos.length
+          ? `<span class="hecho">🔔 Recordatorio enviado a los ${vivos.length}</span>`
+          : `<button type="button" class="wa recordar" data-recordar-todos="${esc(s.id)}">🔔 Recordar a todos · ${listos} de ${vivos.length}</button>`;
+      })()}</div>` : ''}
       <div class="quienes">${filas || '<div class="vacia">Nadie todavía.</div>'}</div>
       <div class="agregar"><select data-agregar="${esc(s.id)}"><option value="">Agregar a alguien… (✓ puede todas las horas, ~ algunas)</option>${opciones}</select></div>
     </div>`;
@@ -325,6 +435,7 @@ async function asignar(folio, sesion) {
 
 function pintarTodo() {
   pintarSesiones();
+  pintarColaRecordar();
   pintarCifras();
   pintarCarreras();
   pintarGenero();
